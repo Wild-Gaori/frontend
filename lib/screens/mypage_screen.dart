@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard_screen.dart';
-import 'package:qnart/screens/museum/museum1_screen.dart';
-import 'package:qnart/screens/mypage_screen.dart';
 import 'package:qnart/widgets/van_image.dart';
 import 'package:qnart/widgets/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
+import 'package:qnart/widgets/main_appbar.dart';
 
-class HomeScreen extends StatelessWidget {
+class MyPage extends StatelessWidget {
   final appBarHeight = kToolbarHeight;
 
-  const HomeScreen({super.key});
+  const MyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset('asset/img/logo.png'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
+      appBar: const MainAppBar(),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -55,9 +50,9 @@ class HomeScreen extends StatelessWidget {
               bottom: (MediaQuery.of(context).size.height * 0.35),
               right: 0,
               child: const MainButton(
-                icon: Icons.calendar_view_day_rounded,
-                title: "작품 감상하기",
-                subtitle: "랜덤으로 선정된 명화를 감상해요",
+                icon: Icons.chat,
+                title: "대화 기록 보기",
+                subtitle: "감상 기록과 생성한 그림을 확인해요",
                 destination: ArtCardScreen(),
               ),
             ),
@@ -65,19 +60,19 @@ class HomeScreen extends StatelessWidget {
               bottom: (MediaQuery.of(context).size.height * 0.20),
               right: 0,
               child: const MainButton(
-                icon: Icons.museum,
-                title: "미술관 찾기",
-                subtitle: "미술관 전시를 검색해 감상해요",
-                destination: MuseumScreen1(),
+                icon: Icons.add_reaction,
+                title: "도슨트 목록",
+                subtitle: "함께할 도슨트를 선택해요",
+                destination: MyPage(),
               ),
             ),
             Positioned(
               bottom: (MediaQuery.of(context).size.height * 0.05),
               right: 0,
               child: const MainButton(
-                icon: Icons.person_rounded,
-                title: "마이페이지",
-                subtitle: "기록을 확인하거나 정보를 수정해요",
+                icon: Icons.info,
+                title: "내 정보 수정",
+                subtitle: "내 정보를 수정해요",
                 destination: MyPage(),
               ),
             ),

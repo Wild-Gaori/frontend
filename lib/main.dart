@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/consts/basic_theme_data.dart';
+import 'package:qnart/screens/artcard_screen.dart';
 import 'package:qnart/screens/home_screen.dart';
 
 void main() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qnart/screens/chat/chat_screen.dart';
 import 'package:qnart/widgets/art_card.dart';
 import 'package:qnart/widgets/bot_message.dart';
 import 'package:qnart/widgets/main_appbar.dart';
@@ -24,10 +25,15 @@ class ArtCardScreen extends StatelessWidget {
           const SizedBox(height: 20),
           const Center(child: ArtCard()),
           const SizedBox(height: 20),
-          const BotMessage(),
+          const BotMessage(message: '이야기를 나눌 준비가 되었다면 아래 버튼을 눌러줘!'),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ChatScreen()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),

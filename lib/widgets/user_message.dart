@@ -1,34 +1,20 @@
 import 'package:flutter/material.dart';
 
-class BotMessage extends StatelessWidget {
+class UserMessage extends StatelessWidget {
   final String message;
-  // final String avatar;
 
-  const BotMessage({
+  const UserMessage({
     super.key,
     required this.message,
-    // required this.avatar,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 0),
-      child: (Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.fromLTRB(0, 18.0, 20.0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: AssetImage('asset/img/van_sized.png'),
-              ),
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(width: 8),
           Container(
             width: MediaQuery.of(context).size.width * 0.7,
             decoration: const BoxDecoration(
@@ -41,7 +27,7 @@ class BotMessage extends StatelessWidget {
                 ),
               ],
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10.0),
+                topLeft: Radius.circular(10.0),
                 bottomLeft: Radius.circular(10.0),
                 bottomRight: Radius.circular(10.0),
               ),
@@ -58,7 +44,7 @@ class BotMessage extends StatelessWidget {
             ),
           ),
         ],
-      )),
+      ),
     );
   }
 }

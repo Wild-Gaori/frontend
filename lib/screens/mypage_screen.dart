@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qnart/screens/artcard_screen.dart';
+import 'package:qnart/screens/artcard/artcard_screen.dart';
 import 'package:qnart/screens/mypage/record_screen.dart';
 import 'package:qnart/widgets/van_image.dart';
 import 'package:qnart/widgets/main_balloon.dart';

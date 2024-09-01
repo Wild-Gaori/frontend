@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard_screen.dart';
+import 'package:qnart/screens/mypage/record_screen.dart';
 import 'package:qnart/widgets/van_image.dart';
 import 'package:qnart/widgets/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
@@ -53,7 +54,7 @@ class MyPage extends StatelessWidget {
                 icon: Icons.chat,
                 title: "대화 기록 보기",
                 subtitle: "감상 기록과 생성한 그림을 확인해요",
-                destination: ArtCardScreen(),
+                destination: RecordScreen(),
               ),
             ),
             Positioned(

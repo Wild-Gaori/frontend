@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 
 class MuseumScreen3 extends StatelessWidget {
   const MuseumScreen3({super.key});

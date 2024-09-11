@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/consts/basic_theme_data.dart';
 import 'package:qnart/screens/home_screen.dart';
+import 'package:qnart/screens/init/init_first_screen.dart';
+import 'package:qnart/screens/login/login_screen.dart';
+import 'package:qnart/screens/mypage/docent_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -20,7 +20,7 @@ class MuseumTitle extends StatelessWidget {
             fontSize: 28,
             foreground: Paint()
               ..style = PaintingStyle.stroke
-              ..strokeWidth = 2
+              ..strokeWidth = 4
               ..color = Colors.white,
           ),
         ),
@@ -29,6 +29,7 @@ class MuseumTitle extends StatelessWidget {
           style: TextStyle(
             fontSize: 28,
             color: Theme.of(context).colorScheme.onPrimary,
+            fontFamily: 'NanumSquareRoundBold',
           ),
         ),
       ],

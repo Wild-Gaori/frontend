@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard/artcard_screen.dart';
+import 'package:qnart/screens/mypage/docent_screen.dart';
 import 'package:qnart/screens/mypage/record_screen.dart';
-import 'package:qnart/widgets/van_image.dart';
-import 'package:qnart/widgets/main_balloon.dart';
+import 'package:qnart/screens/mypage/userinfo_screen.dart';
+import 'package:qnart/widgets/main/van_image.dart';
+import 'package:qnart/widgets/main/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 
 class MyPage extends StatelessWidget {
   final appBarHeight = kToolbarHeight;
@@ -53,7 +55,7 @@ class MyPage extends StatelessWidget {
               child: const MainButton(
                 icon: Icons.chat,
                 title: "대화 기록 보기",
-                subtitle: "감상 기록과 생성한 그림을 확인해요",
+                subtitle: "대화와 그림 기록을 확인해요",
                 destination: RecordScreen(),
               ),
             ),
@@ -64,7 +66,7 @@ class MyPage extends StatelessWidget {
                 icon: Icons.add_reaction,
                 title: "도슨트 목록",
                 subtitle: "함께할 도슨트를 선택해요",
-                destination: MyPage(),
+                destination: DocentScreen(),
               ),
             ),
             Positioned(
@@ -74,7 +76,7 @@ class MyPage extends StatelessWidget {
                 icon: Icons.info,
                 title: "내 정보 수정",
                 subtitle: "내 정보를 수정해요",
-                destination: MyPage(),
+                destination: UserInfoScreen(),
               ),
             ),
           ],
@@ -135,9 +137,9 @@ class MainButton extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 20,
-                ),
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 20,
+                    fontFamily: "NanumSquareRoundMedium"),
               ),
               Text(
                 subtitle,

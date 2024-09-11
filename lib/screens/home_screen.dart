@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard/artcard_screen.dart';
 import 'package:qnart/screens/museum/museum1_screen.dart';
 import 'package:qnart/screens/mypage_screen.dart';
-import 'package:qnart/widgets/van_image.dart';
-import 'package:qnart/widgets/main_balloon.dart';
+import 'package:qnart/widgets/main/van_image.dart';
+import 'package:qnart/widgets/main/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,6 +15,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // 디버깅용..
+        // automaticallyImplyLeading: false,
         title: Image.asset('asset/img/logo.png'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -77,7 +79,7 @@ class HomeScreen extends StatelessWidget {
               child: const MainButton(
                 icon: Icons.person_rounded,
                 title: "마이페이지",
-                subtitle: "기록을 확인하거나 정보를 수정해요",
+                subtitle: "기록을 확인하고 정보를 수정해요",
                 destination: MyPage(),
               ),
             ),

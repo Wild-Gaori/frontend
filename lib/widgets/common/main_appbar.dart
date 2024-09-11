@@ -18,7 +18,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: const Color(0xffF5004F),
         padding: const EdgeInsets.all(10),
       ),
-      title: Image.asset('asset/img/logo.png'),
+      title: Image.asset('asset/img/logo/logo.png'),
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.primary,
     );

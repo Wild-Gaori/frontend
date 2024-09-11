@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/museum/display_info.dart';
 import 'package:qnart/widgets/museum/floor_info.dart';
 import 'package:qnart/widgets/museum/museum_container.dart';

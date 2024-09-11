@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/chat_screen.dart';
 import 'package:qnart/widgets/art_card.dart';
-import 'package:qnart/widgets/bot_message.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 
 class ArtCardScreen extends StatelessWidget {
   const ArtCardScreen({super.key});

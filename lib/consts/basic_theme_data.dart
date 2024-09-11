@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 ThemeData basicThemeData() {
   return ThemeData(
-    fontFamily: 'PretendardMedium',
+    fontFamily: 'NanumSquareRoundMedium',
     colorScheme: const ColorScheme.light(
       primary: Color(0xfff9e400),
       secondary: Color(0xffFFAF00),

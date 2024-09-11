@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qnart/widgets/bot_message.dart';
-import 'package:qnart/widgets/main_appbar.dart';
-import 'package:qnart/widgets/user_message.dart';
+import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
+import 'package:qnart/widgets/chat/user_message.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';

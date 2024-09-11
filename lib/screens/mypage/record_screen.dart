@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/utils/size_config.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/mypage/mypage_container.dart';
 
 class RecordScreen extends StatelessWidget {

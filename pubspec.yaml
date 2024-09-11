@@ -61,6 +61,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - asset/img/
+    - asset/img/letter/
+    - asset/img/chars/
+    - asset/img/chars/black/
+    - asset/img/signup/
+    - asset/img/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -80,6 +85,12 @@ flutter:
     - family: PretendardMedium
       fonts:
         - asset: asset/font/Pretendard-Medium.otf
+    - family: NanumSquareRoundBold
+      fonts:
+        - asset: asset/font/NanumSquareRoundOTFB.otf
+    - family: NanumSquareRoundMedium
+      fonts:
+        - asset: asset/font/NanumSquareRoundOTFR.otf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

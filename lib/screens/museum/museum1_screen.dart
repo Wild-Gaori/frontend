@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/museum/museum2_screen.dart';
-import 'package:qnart/widgets/main_appbar.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/museum/museum_container.dart';
 
 class MuseumScreen1 extends StatelessWidget {

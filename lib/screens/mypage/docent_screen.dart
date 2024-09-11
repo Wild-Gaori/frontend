@@ -54,12 +54,12 @@ class DocentScreen extends StatelessWidget {
                       DocentInfo(
                         name: '빈센트 반 고래',
                         comment: '안녕, 친구들! 오늘은 우리 같이 그림 속으로 모험을 떠나볼까?',
-                        imgLink: 'asset/img/van_sized.png',
+                        imgLink: 'asset/img/chars/van_sized.png',
                       ),
                       DocentInfo(
                         name: 'name',
                         comment: 'comment',
-                        imgLink: 'asset/img/van_sized.png',
+                        imgLink: 'asset/img/chars/van_sized.png',
                       ),
                     ],
                   ),

@@ -64,7 +64,7 @@ class DocentCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Image.asset(
-                    'asset/img/van_sized.png',
+                    'asset/img/chars/van_sized.png',
                     height: 150,
                   ),
                 ),

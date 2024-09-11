@@ -53,7 +53,7 @@ class RecordBtn extends StatelessWidget {
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('asset/img/van_sized.png'),
+                image: AssetImage('asset/img/chars/van_sized.png'),
               ),
               color: Colors.transparent,
             ),

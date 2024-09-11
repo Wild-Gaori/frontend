@@ -7,7 +7,7 @@ class VanImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
-        'asset/img/van_sized.png',
+        'asset/img/chars/van_sized.png',
         height: MediaQuery.of(context).size.height * 0.25,
       ),
     );

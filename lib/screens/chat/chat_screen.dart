@@ -86,6 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const MainAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

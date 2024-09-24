@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/consts/basic_theme_data.dart';
+import 'package:qnart/screens/artcard/artcard_screen.dart';
 import 'package:qnart/screens/home_screen.dart';
+import 'package:qnart/screens/imagetest.dart';
 import 'package:qnart/screens/init/init_first_screen.dart';
 import 'package:qnart/screens/login/login_screen.dart';
 import 'package:qnart/screens/mypage/docent_screen.dart';
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: basicThemeData(),
-      home: const HomeScreen(), // 홈 화면 설정
+      home: const LoginScreen(), // 홈 화면 설정
     );
   }
 }

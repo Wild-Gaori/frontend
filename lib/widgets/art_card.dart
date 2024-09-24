@@ -50,7 +50,8 @@ class ArtCard extends StatelessWidget {
               maxLines: 1,
             ),
             Text(
-              'Description',
+              '모나리자 속에 숨겨진 이야기를 알아볼까요?',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
                 color: Theme.of(context).colorScheme.onPrimary,

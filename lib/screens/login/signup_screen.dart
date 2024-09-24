@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/login/login_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:qnart/utils/fetch_csrf_token.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,10 +14,42 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+  final TextEditingController _confirmPwController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool isPasswordMatching = true;
+
+  Future<void> handleSignup(BuildContext context) async {
+    String csrfToken = await fetchCsrfToken('http://13.124.100.182/signup/');
+
+    var url = Uri.parse('http://13.124.100.182/signup/');
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_id': _idController.text,
+      'pw': _pwController.text,
+      'email': _emailController.text,
+    });
+    print(body);
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        print('ok');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      } else {
+        print(response.body);
+      }
+    } finally {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             buildTextField(
               context,
               hintText: '아이디를 입력해주세요',
+              controller: _idController,
               suffix: ElevatedButton(
                 onPressed: () {
                   // 중복 확인 로직 구현
@@ -78,17 +115,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
               hintText: '비밀번호를 입력해주세요',
               obscureText: true,
-              controller: _passwordController,
+              controller: _pwController,
             ),
             const SizedBox(height: 16),
             buildTextField(
               context,
               hintText: '비밀번호 확인',
               obscureText: true,
-              controller: _confirmPasswordController,
+              controller: _confirmPwController,
               onChanged: (value) {
                 setState(() {
-                  isPasswordMatching = _passwordController.text == value;
+                  isPasswordMatching = _pwController.text == value;
                 });
               },
             ),
@@ -101,11 +138,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
             buildTextField(
               context,
               hintText: '이메일을 입력해주세요',
+              controller: _emailController,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // 회원가입 로직 구현
+              onPressed: () async {
+                await handleSignup(context);
               },
               child: Text(
                 '회원가입',

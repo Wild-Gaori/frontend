@@ -3,9 +3,28 @@ import 'package:qnart/screens/chat/chat_screen.dart';
 import 'package:qnart/widgets/art_card.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
+import 'package:http/http.dart' as http;
 
-class ArtCardScreen extends StatelessWidget {
+class ArtCardScreen extends StatefulWidget {
   const ArtCardScreen({super.key});
+
+  @override
+  State<ArtCardScreen> createState() => _ArtCardScreenState();
+}
+
+class _ArtCardScreenState extends State<ArtCardScreen> {
+  Future<void> handleRandom() async {
+    final url = Uri.parse("http://13.124.100.182/masterpiece/random/");
+    final response = await http.get(url);
+    print(response.body);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    handleRandom();
+  }
 
   @override
   Widget build(BuildContext context) {

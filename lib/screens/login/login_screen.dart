@@ -1,16 +1,56 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qnart/screens/home_screen.dart';
 import 'package:qnart/screens/login/signup_screen.dart';
+import 'package:http/http.dart' as http;
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+
+  String csrfToken = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCsrfToken();
+  }
+
+  // CSRF 토큰을 가져오는 함수
+  Future<void> fetchCsrfToken() async {
+    final url = Uri.parse('http://13.124.100.182'); // Django 로그인 엔드포인트
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // 쿠키에서 csrf 토큰을 추출
+      String? rawCookie = response.headers['set-cookie'];
+      if (rawCookie != null) {
+        int start = rawCookie.indexOf('csrftoken=');
+        if (start != -1) {
+          int end = rawCookie.indexOf(';', start);
+          csrfToken = rawCookie.substring(start + 10, end);
+        }
+      }
+    } else {
+      print('STOP');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+        // resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
@@ -61,22 +101,23 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ),
-          const loginFieldWidget(
+          LoginFieldWidget(
+            controller: _idController,
             hintText: '아이디',
           ),
-          const loginFieldWidget(
+          LoginFieldWidget(
+            controller: _pwController,
             hintText: '비밀번호',
+            isObscured: true,
           ),
           const SizedBox(height: 15),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              print(_idController.text);
+              print(_pwController.text);
               //로그인 처리 필요
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ),
-              );
+
+              await handleLogin(context);
             },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -115,18 +156,55 @@ class LoginScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
+  }
+
+  Future<void> handleLogin(BuildContext context) async {
+    var url = Uri.parse('http://13.124.100.182');
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_id': _idController.text,
+      'pw': _pwController.text,
+    });
+    print(body);
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        print('ok');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } else {
+        print(response.body);
+      }
+    } finally {}
   }
 }
 
-class loginFieldWidget extends StatelessWidget {
+class LoginFieldWidget extends StatefulWidget {
   final String hintText;
+  final TextEditingController controller;
+  final bool isObscured;
 
-  const loginFieldWidget({
+  const LoginFieldWidget({
     super.key,
     required this.hintText,
+    required this.controller,
+    this.isObscured = false,
   });
 
+  @override
+  State<LoginFieldWidget> createState() => _LoginFieldWidgetState();
+}
+
+class _LoginFieldWidgetState extends State<LoginFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -135,11 +213,13 @@ class loginFieldWidget extends StatelessWidget {
         width: 300,
         height: 50,
         child: TextField(
+          controller: widget.controller,
+          obscureText: widget.isObscured,
           style: const TextStyle(
             fontSize: 20,
           ),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             border: OutlineInputBorder(
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.onPrimary),

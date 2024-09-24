@@ -39,9 +39,9 @@ class DocentScreen extends StatelessWidget {
                           curve: Curves.easeInOut);
                     },
                     padding: EdgeInsets.zero,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back_ios_rounded,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       size: 30,
                     ),
                   ),
@@ -52,14 +52,28 @@ class DocentScreen extends StatelessWidget {
                     controller: controller,
                     children: const <Widget>[
                       DocentInfo(
+                        id: 'van',
                         name: '빈센트 반 고래',
                         comment: '안녕, 친구들! 오늘은 우리 같이 그림 속으로 모험을 떠나볼까?',
-                        imgLink: 'asset/img/chars/van_sized.png',
+                        cleared: true,
                       ),
                       DocentInfo(
-                        name: 'name',
+                        id: 'octo',
+                        name: '진주 귀걸이 문어',
                         comment: 'comment',
-                        imgLink: 'asset/img/chars/van_sized.png',
+                        cleared: false,
+                      ),
+                      DocentInfo(
+                        id: 'monet',
+                        name: '클로드 모네 해달',
+                        comment: 'comment',
+                        cleared: false,
+                      ),
+                      DocentInfo(
+                        id: 'piri',
+                        name: '피리 부는 가오리',
+                        comment: 'comment',
+                        cleared: false,
                       ),
                     ],
                   ),
@@ -74,9 +88,9 @@ class DocentScreen extends StatelessWidget {
                           curve: Curves.easeInOut);
                     },
                     padding: EdgeInsets.zero,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       size: 30,
                     ),
                   ),
@@ -90,19 +104,26 @@ class DocentScreen extends StatelessWidget {
   }
 }
 
-class DocentInfo extends StatelessWidget {
+class DocentInfo extends StatefulWidget {
   //Docent모델 정의 후 나중에 바꿀것
+  final String id; //van, octo, ...
   final String name;
   final String comment;
-  final String imgLink;
+  final bool cleared;
 
   const DocentInfo({
+    required this.id,
     required this.name,
     required this.comment,
-    required this.imgLink,
+    required this.cleared,
     super.key,
   });
 
+  @override
+  State<DocentInfo> createState() => _DocentInfoState();
+}
+
+class _DocentInfoState extends State<DocentInfo> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -124,7 +145,7 @@ class DocentInfo extends StatelessWidget {
               ),
             ),
             child: Text(
-              comment,
+              widget.cleared ? widget.comment : '아직 만나지 못한 도슨트예요.',
               style: const TextStyle(
                 fontSize: 16,
               ),
@@ -136,13 +157,15 @@ class DocentInfo extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.transparent,
               image: DecorationImage(
-                image: AssetImage(imgLink),
+                image: AssetImage(widget.cleared
+                    ? 'asset/img/chars/${widget.id}_sized.png'
+                    : 'asset/img/chars/black/${widget.id}_black.png'),
                 fit: BoxFit.contain,
               ),
             ),
           ),
           Text(
-            name,
+            widget.cleared ? widget.name : '???',
             style: const TextStyle(
               color: Color(0xff020d50),
               fontSize: 32,
@@ -150,12 +173,12 @@ class DocentInfo extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: widget.cleared ? () {} : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             child: Text(
-              '선택하기',
+              widget.cleared ? '선택하기' : '선택 불가',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),

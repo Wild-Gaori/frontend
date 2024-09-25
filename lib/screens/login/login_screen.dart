@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _idController = TextEditingController();
-  final TextEditingController _pwController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   String csrfToken = "";
 
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
             hintText: '아이디',
           ),
           LoginFieldWidget(
-            controller: _pwController,
+            controller: _passwordController,
             hintText: '비밀번호',
             isObscured: true,
           ),
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ElevatedButton(
             onPressed: () async {
               print(_idController.text);
-              print(_pwController.text);
+              print(_passwordController.text);
               //로그인 처리 필요
 
               await handleLogin(context);
@@ -160,21 +160,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> handleLogin(BuildContext context) async {
-    var url = Uri.parse('http://13.124.100.182');
+    var url = Uri.parse('http://13.124.100.182/');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함
       "Cookie": "csrftoken=$csrfToken",
     };
     final body = jsonEncode({
-      'user_id': _idController.text,
-      'pw': _pwController.text,
+      'username': _idController.text,
+      'password': _passwordController.text,
     });
     print(body);
     try {
       var response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        print('ok');
+        print(response.body);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -183,6 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         print(response.body);
+        print(response.statusCode);
       }
     } finally {}
   }

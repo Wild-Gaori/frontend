@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/consts/basic_theme_data.dart';
 import 'package:qnart/screens/artcard/artcard_screen.dart';
+import 'package:qnart/screens/chat/draw_screen.dart';
 import 'package:qnart/screens/home_screen.dart';
 import 'package:qnart/screens/imagetest.dart';
 import 'package:qnart/screens/init/init_first_screen.dart';

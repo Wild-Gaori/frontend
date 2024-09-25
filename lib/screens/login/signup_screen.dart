@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/login/login_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:qnart/screens/login/signup_complete_screen.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/widgets/common/dialog_ui.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -20,33 +22,80 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   bool isPasswordMatching = true;
 
-  Future<void> handleSignup(BuildContext context) async {
-    String csrfToken = await fetchCsrfToken('http://13.124.100.182/signup/');
+  void showCustomDialog(String dialogMessage) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogUI(
+            dialogMessage: dialogMessage,
+          );
+        });
+  }
 
-    var url = Uri.parse('http://13.124.100.182/signup/');
+  Future<void> checkAvailability() async {
+    String csrfToken = await fetchCsrfToken(
+        'http://13.124.100.182/signup/?action=check_username/');
+    var url = Uri.parse('http://13.124.100.182/signup/?action=check_username/');
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+
+    final body = jsonEncode({
+      'action': 'check_username',
+      'username': _idController.text,
+    });
+    var response = await http.post(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      showCustomDialog('사용 가능한 아이디입니다.');
+    } else {
+      showCustomDialog('사용 불가한 아이디입니다.\n다른 아이디를 사용해주세요.');
+    }
+  }
+
+  Future<void> handleSignup(BuildContext context) async {
+    String csrfToken =
+        await fetchCsrfToken('http://13.124.100.182/signup/?action=signup/');
+    var url = Uri.parse('http://13.124.100.182/signup/?action=signup/');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함
       "Cookie": "csrftoken=$csrfToken",
     };
     final body = jsonEncode({
-      'user_id': _idController.text,
-      'pw': _pwController.text,
+      'action': 'signup',
+      'username': _idController.text,
+      'password': _pwController.text,
+      'password_confirm': _confirmPwController.text,
       'email': _emailController.text,
     });
     print(body);
     try {
       var response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        print('ok');
+      if (response.statusCode == 201) {
+        print('signup completed');
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
+            builder: (context) => const SignupCompleteScreen(),
           ),
         );
+      } else if (response.statusCode == 500) {
+        showCustomDialog('Invalid error');
       } else {
+        print(response.statusCode);
         print(response.body);
+        var errorMessage = (jsonDecode(response.body))['error'];
+        if (errorMessage == "Please fill out all fields.") {
+          showCustomDialog('모든 정보를 입력해주세요.');
+        } else if (errorMessage == "Passwords do not match.") {
+          showCustomDialog('비밀번호가 일치하지 않습니다.');
+        } else if (errorMessage ==
+            "Password must be at least 4 characters long.") {
+          showCustomDialog('비밀번호는 4자 이상으로\n입력해주세요.');
+        } else
+          showCustomDialog('Invalid error');
       }
     } finally {}
   }
@@ -72,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             Container(
               width: 260,
-              height: 200,
+              height: 150,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('asset/img/logo/logo.png'),
@@ -94,9 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               hintText: '아이디를 입력해주세요',
               controller: _idController,
               suffix: ElevatedButton(
-                onPressed: () {
-                  // 중복 확인 로직 구현
-                },
+                onPressed: checkAvailability,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
                   padding:
@@ -127,6 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 setState(() {
                   isPasswordMatching = _pwController.text == value;
                 });
+                setState(() {});
               },
             ),
             if (!isPasswordMatching)

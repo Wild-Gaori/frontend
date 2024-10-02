@@ -53,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 80),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: SizedBox(
@@ -117,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
               print(_passwordController.text);
               //로그인 처리 필요
 
-              await handleLogin(context);
+              await handleLogin();
             },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -159,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  Future<void> handleLogin(BuildContext context) async {
+  Future<void> handleLogin() async {
     var url = Uri.parse('http://13.124.100.182/');
     var headers = {
       "Content-Type": "application/json",
@@ -173,14 +174,18 @@ class _LoginScreenState extends State<LoginScreen> {
     print(body);
     try {
       var response = await http.post(url, headers: headers, body: body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         print(response.body);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-        );
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+          );
+        }
+        print("navigator called");
       } else {
         print(response.body);
         print(response.statusCode);

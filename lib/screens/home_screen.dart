@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard/artcard_screen.dart';
 import 'package:qnart/screens/museum/museum1_screen.dart';
 import 'package:qnart/screens/mypage_screen.dart';
+import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/main/van_image.dart';
 import 'package:qnart/widgets/main/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
@@ -14,13 +15,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // 디버깅용..
-        // automaticallyImplyLeading: false,
-        title: Image.asset('asset/img/logo.png'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
+      appBar: const MainAppBar(),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

@@ -19,8 +19,12 @@ class SignupCompleteScreen extends StatelessWidget {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 200),
+            const Image(
+              image: AssetImage('asset/img/logo/pic_logo.png'),
+              width: 300,
+            ),
             const Text(
               '회원가입이 완료되었습니다.',
               style: TextStyle(

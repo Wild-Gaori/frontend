@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
 
-class UserMessage extends StatelessWidget {
-  final String message;
+class ImageMessage extends StatelessWidget {
+  final String url;
 
-  const UserMessage({
+  const ImageMessage({
     super.key,
-    required this.message,
+    required this.url,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 18.0, 40.0, 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 0),
+      child: (Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: const DecorationImage(
+                image: AssetImage('asset/img/chars/van_sized.png'),
+              ),
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 5),
           Container(
             width: MediaQuery.of(context).size.width * 0.7,
             decoration: const BoxDecoration(
@@ -27,24 +39,18 @@ class UserMessage extends StatelessWidget {
                 ),
               ],
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0),
                 bottomLeft: Radius.circular(10.0),
                 bottomRight: Radius.circular(10.0),
               ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(13.0),
-              child: Text(
-                message,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
+              child: url != null ? Image.network(url) : const Text('로딩 실패'),
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

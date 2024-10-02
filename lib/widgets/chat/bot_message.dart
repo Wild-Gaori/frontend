@@ -6,43 +6,83 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dart_openai/dart_openai.dart';
 import '../../env/env.dart';
 
+import 'package:http/http.dart' as http;
+
 class BotMessage extends StatelessWidget {
   final String message;
-  // final String avatar;
 
   const BotMessage({
     super.key,
     required this.message,
-    // required this.avatar,
   });
 
+  // OpenAI TTS 버전
+  // Future<void> getSpeech() async {
+  //   OpenAI.apiKey = Env.apiKey;
+
+  //   final directory = await getApplicationCacheDirectory();
+  //   final speechOutputDir = Directory('${directory.path}/speechOutput');
+  //   if (!speechOutputDir.existsSync()) {
+  //     await speechOutputDir.create(recursive: true);
+  //   }
+
+  //   File speechFile = await OpenAI.instance.audio.createSpeech(
+  //     model: "tts-1",
+  //     input: message,
+  //     voice: "nova",
+  //     responseFormat: OpenAIAudioSpeechResponseFormat.mp3,
+  //     outputDirectory: speechOutputDir,
+  //   );
+
+  //   print(speechFile.path);
+
+  //   final player = AudioPlayer();
+  //   await player.play(UrlSource('file://${speechFile.path}'), volume: 1.0);
+  // }
+
+  //naver TTS 버전
   Future<void> getSpeech() async {
-    OpenAI.apiKey = Env.apiKey;
+    var clientId = 'mahryq3b59';
+    var clientSecret = 'BC0APV872iNbI2SjvmkQ7eFCDUksFHE4cuE2ktu7';
 
-    final directory = await getApplicationCacheDirectory();
-    final speechOutputDir = Directory('${directory.path}/speechOutput');
-    if (!speechOutputDir.existsSync()) {
-      await speechOutputDir.create(recursive: true);
+    const String apiUrl =
+        'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
+
+    try {
+      var response = await http.post(Uri.parse(apiUrl), headers: {
+        'X-NCP-APIGW-API-KEY-ID': clientId,
+        'X-NCP-APIGW-API-KEY': clientSecret,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: {
+        'speaker': 'ngaram',
+        'text': message,
+        'format': 'mp3',
+      });
+
+      if (response.statusCode == 200) {
+        final directory = await getApplicationCacheDirectory();
+        final speechOutputDir = Directory('${directory.path}/speechOutput');
+        if (!speechOutputDir.existsSync()) {
+          await speechOutputDir.create(recursive: true);
+        }
+
+        final File speechFile = File('${directory.path}/tts1.mp3');
+        await speechFile.writeAsBytes(response.bodyBytes);
+
+        final player = AudioPlayer();
+        await player.play(UrlSource('file://${speechFile.path}'), volume: 1.0);
+      } else {
+        print('Failed to get speech. statusCode: $response.statusCode');
+      }
+    } catch (e) {
+      print(e);
     }
-
-    File speechFile = await OpenAI.instance.audio.createSpeech(
-      model: "tts-1",
-      input: message,
-      voice: "nova",
-      responseFormat: OpenAIAudioSpeechResponseFormat.mp3,
-      outputDirectory: speechOutputDir,
-    );
-
-    print(speechFile.path);
-
-    final player = AudioPlayer();
-    await player.play(UrlSource('file://${speechFile.path}'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 10.0),
       child: (Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

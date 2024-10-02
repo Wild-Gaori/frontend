@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/chat_screen.dart';
 import 'package:qnart/widgets/art_card.dart';
@@ -13,10 +15,21 @@ class ArtCardScreen extends StatefulWidget {
 }
 
 class _ArtCardScreenState extends State<ArtCardScreen> {
+  String hook = "설명";
+  String title = "제목";
+  int session_id = 0;
+
   Future<void> handleRandom() async {
     final url = Uri.parse("http://13.124.100.182/masterpiece/random/");
     final response = await http.get(url);
     print(response.body);
+
+    final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+    setState(() {
+      hook = jsonData["hook"];
+      title = jsonData["title"];
+      session_id = jsonData["session_id"];
+    });
   }
 
   @override
@@ -42,7 +55,11 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
           ),
           Image.asset('asset/img/title_underline_yellow.png'),
           const SizedBox(height: 20),
-          const Center(child: ArtCard()),
+          Center(
+              child: ArtCard(
+            title: title,
+            hook: hook,
+          )),
           const SizedBox(height: 20),
           const BotMessage(message: '이야기를 나눌 준비가 되었다면 아래 버튼을 눌러줘!'),
           const SizedBox(height: 20),
@@ -50,7 +67,10 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ChatScreen()),
+                MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                          sessionId: session_id,
+                        )),
               );
             },
             style: ElevatedButton.styleFrom(

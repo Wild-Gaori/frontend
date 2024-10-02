@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final int sessionId;
+
+  const ChatScreen({super.key, required this.sessionId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -22,6 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final bool _isListening = false;
   bool _speechEnabled = false;
   String _ttsText = '';
+  String prompt = '';
 
   @override
   void initState() {
@@ -43,18 +50,42 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_controller.text.isNotEmpty) {
       setState(() {
         _messages.add({'sender': 'user', 'text': _controller.text});
+        prompt = _controller.text;
         _controller.clear();
       });
     }
     _getBotMessage();
   }
 
-  void _getBotMessage() {
+  void _getBotMessage() async {
     // GPT 응답 받아오기
-    // 임시
-    setState(() {
-      _messages.add({'sender': 'bot', 'text': 'Test AI Message here'});
+    String csrfToken =
+        await fetchCsrfToken('http://13.124.100.182/masterpiece/chat/');
+    final url = Uri.parse('http://13.124.100.182/masterpiece/chat/');
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'session_id': widget.sessionId,
+      'message': prompt,
     });
+
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final gptResponse =
+            (jsonDecode(utf8.decode(response.bodyBytes)))["response"];
+        print(gptResponse);
+        setState(() {
+          _messages.add({'sender': 'bot', 'text': gptResponse});
+        });
+      } else {
+        print(response.statusCode);
+        print(response.body);
+      }
+    } finally {}
   }
 
   void _startListening() async {
@@ -64,13 +95,13 @@ class _ChatScreenState extends State<ChatScreen> {
       pauseFor: const Duration(seconds: 5),
       localeId: 'ko_KR',
     );
-    print('mic clicked');
+    // print('mic clicked');
     setState(() {});
   }
 
   void _stopListening() async {
     await _speech.stop();
-    print('mic stopped');
+    // print('mic stopped');
     setState(() {});
   }
 
@@ -86,7 +117,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: const MainAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

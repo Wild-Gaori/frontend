@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/chat/draw_buttons.dart';
+import 'package:qnart/widgets/chat/image_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -19,11 +21,12 @@ class DrawScreen extends StatefulWidget {
 
 class _DrawScreenState extends State<DrawScreen> {
   final List<Map<String, String>> _messages = [
-    {'sender': 'bot', 'text': '이제 감상 내용을 바탕으로 그림을 그려볼 시간이야!'}
+    {'sender': 'bot', 'text': '이제 감상 내용을 바탕으로 그림을 그려볼 시간이야!'},
+    {'sender': 'button', 'text': '그림 그릴 방법 선택'}
   ]; // 발신자-메시지 저장
   final TextEditingController _controller = TextEditingController();
   final SpeechToText _speech = SpeechToText();
-  final bool _isListening = false;
+  // final bool _isListening = false;
   bool _speechEnabled = false;
   String _ttsText = '';
 
@@ -59,8 +62,8 @@ class _DrawScreenState extends State<DrawScreen> {
   Future<void> _getBotMessage() async {
     // dalle 응답 받아오기
     String csrfToken =
-        await fetchCsrfToken('http://13.124.100.182/imagegen/generate');
-    final url = Uri.parse('http://13.124.100.182/imagegen/generate');
+        await fetchCsrfToken('http://13.124.100.182/imagegen/generate/');
+    final url = Uri.parse('http://13.124.100.182/imagegen/generate/');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함
@@ -73,9 +76,10 @@ class _DrawScreenState extends State<DrawScreen> {
     try {
       var response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        String dalleResponse = response.body;
+        final dalleResponse = (jsonDecode(response.body))["image_url"];
+        print(dalleResponse);
         setState(() {
-          _messages.add({'sender': 'bot', 'text': dalleResponse});
+          _messages.add({'sender': 'image', 'text': dalleResponse});
         });
       } else {
         print(response.statusCode);
@@ -91,19 +95,17 @@ class _DrawScreenState extends State<DrawScreen> {
       pauseFor: const Duration(seconds: 5),
       localeId: 'ko_KR',
     );
-    print('mic clicked');
+    // print('mic clicked');
     setState(() {});
   }
 
   void _stopListening() async {
     await _speech.stop();
-    print('mic stopped');
+    // print('mic stopped');
     setState(() {});
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
-    print('speech result');
-    print(result);
     setState(() {
       _ttsText = result.recognizedWords;
       _controller.text = _ttsText;
@@ -127,10 +129,14 @@ class _DrawScreenState extends State<DrawScreen> {
                   return UserMessage(
                     message: _messages[index]['text']!,
                   );
-                } else {
+                } else if (_messages[index]['sender'] == 'bot') {
                   return BotMessage(
                     message: _messages[index]['text']!,
                   );
+                } else if (_messages[index]['sender'] == 'button') {
+                  return const DrawButtons();
+                } else {
+                  return ImageMessage(url: _messages[index]['text']!);
                 }
               },
             ),

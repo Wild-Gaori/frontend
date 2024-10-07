@@ -48,7 +48,7 @@ class BotMessage extends StatelessWidget {
     try {
       var response = await http.post(Uri.parse(apiUrl), headers: {
         'X-NCP-APIGW-API-KEY-ID': Env.clientId,
-        'X-NCP-APIGW-API-KEY': Env.clientSecret,
+        'X-NCP-APIGW-API-KEY': Env.clientSecret2,
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
         'speaker': 'ngaram',

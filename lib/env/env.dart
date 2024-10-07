@@ -8,5 +8,5 @@ abstract class Env {
   @EnviedField(varName: 'NAVER_CLIENT_ID') // the .env variable.
   static const String clientId = _Env.clientId;
   @EnviedField(varName: 'NAVER_CLIENT_SECRET') // the .env variable.
-  static const String clientSecret = _Env.clientSecret;
+  static const String clientSecret2 = _Env.clientSecret2;
 }

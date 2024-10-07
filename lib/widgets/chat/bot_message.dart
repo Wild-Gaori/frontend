@@ -42,9 +42,6 @@ class BotMessage extends StatelessWidget {
 
   //naver TTS 버전
   Future<void> getSpeech() async {
-    var clientId = 'mahryq3b59';
-    var clientSecret = 'BC0APV872iNbI2SjvmkQ7eFCDUksFHE4cuE2ktu7';
-
     const String apiUrl =
         'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
 

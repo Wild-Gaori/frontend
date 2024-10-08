@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qnart/screens/chat/draw_screen.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/chat/show_image_container.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
+import 'package:qnart/widgets/common/yellow_button.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,8 +15,9 @@ import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   final int sessionId;
+  final String imgPath;
 
-  const ChatScreen({super.key, required this.sessionId});
+  const ChatScreen({super.key, required this.sessionId, required this.imgPath});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -29,6 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _speechEnabled = false;
   String _ttsText = '';
   String prompt = '';
+  bool isChatting = true;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -51,10 +56,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _initChat() {
     setState(() {
+      _messages.add({'sender': 'image', 'text': widget.imgPath});
       prompt = "시작";
     });
     print(prompt);
-    // _getBotMessage();
+    _getBotMessage();
   }
 
   void _sendMessage() {
@@ -63,12 +69,12 @@ class _ChatScreenState extends State<ChatScreen> {
         _messages.add({'sender': 'user', 'text': _controller.text});
         prompt = _controller.text;
         _controller.clear();
-        _scrollController.animateTo(
-          curve: Curves.easeInOut,
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-        );
       });
+      _scrollController.animateTo(
+        curve: Curves.easeInOut,
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+      );
     }
     _getBotMessage();
   }
@@ -97,11 +103,18 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add({'sender': 'bot', 'text': gptResponse});
         });
-        // _scrollController.animateTo(
-        //   curve: Curves.easeInOut,
-        //   _scrollController.position.maxScrollExtent,
-        //   duration: const Duration(milliseconds: 300),
-        // );
+        _scrollController.animateTo(
+          curve: Curves.easeInOut,
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+        );
+
+        // 종료 시퀀스
+        if (gptResponse.contains('그림 그리러 가자')) {
+          setState(() {
+            isChatting = false;
+          });
+        }
       } else {
         print(response.statusCode);
         print(response.body);
@@ -139,6 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MainAppBar(),
+      resizeToAvoidBottomInset: true,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -152,20 +166,38 @@ class _ChatScreenState extends State<ChatScreen> {
                   return UserMessage(
                     message: _messages[index]['text']!,
                   );
-                } else {
+                } else if (_messages[index]['sender'] == 'bot') {
                   return BotMessage(
                     message: _messages[index]['text']!,
+                  );
+                } else {
+                  return ShowImageContainer(
+                    imgPath: _messages[index]['text']!,
                   );
                 }
               },
             ),
           ),
+          !isChatting
+              ? YellowButton(
+                  text: '그림 그리러 가기',
+                  handlePress: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DrawScreen(),
+                      ),
+                    );
+                  },
+                )
+              : Container(),
           Container(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
+                    enabled: isChatting,
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText:

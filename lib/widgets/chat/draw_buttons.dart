@@ -13,21 +13,21 @@ class DrawButtons extends StatelessWidget {
         children: [
           DrawButton(
             handlePress: () {
-              onSelect('경험');
+              onSelect('experience');
             },
             text: '내 경험으로 그림 그리기',
           ),
           const SizedBox(height: 5.0),
           DrawButton(
             handlePress: () {
-              onSelect('변경');
+              onSelect('change');
             },
             text: '작품에서 바꾸고 싶은 부분 바꾸기',
           ),
           const SizedBox(height: 5.0),
           DrawButton(
             handlePress: () {
-              onSelect('상상');
+              onSelect('imagine');
             },
             text: '작품에서 나타나지 않은 부분 상상하기',
           ),

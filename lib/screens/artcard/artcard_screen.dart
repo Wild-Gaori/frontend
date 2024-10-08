@@ -17,7 +17,7 @@ class ArtCardScreen extends StatefulWidget {
 class _ArtCardScreenState extends State<ArtCardScreen> {
   String hook = "설명";
   String title = "제목";
-  String imgUrl = "";
+  String imgPath = "";
   int session_id = 0;
 
   Future<void> handleRandom() async {
@@ -27,7 +27,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
 
     final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     setState(() {
-      imgUrl = jsonData["image_url"];
+      imgPath = jsonData["image_path"];
       hook = jsonData["hook"];
       title = jsonData["title"];
       session_id = jsonData["session_id"];
@@ -59,7 +59,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
           const SizedBox(height: 20),
           Center(
               child: ArtCard(
-            imgUrl: imgUrl,
+            imgUrl: imgPath,
             title: title,
             hook: hook,
           )),
@@ -73,6 +73,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
                 MaterialPageRoute(
                     builder: (context) => ChatScreen(
                           sessionId: session_id,
+                          imgPath: imgPath,
                         )),
               );
             },

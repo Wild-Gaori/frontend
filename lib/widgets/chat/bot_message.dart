@@ -82,10 +82,11 @@ class BotMessage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 10.0),
       child: (Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: const DecorationImage(
@@ -94,7 +95,7 @@ class BotMessage extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 8),
           Container(
             width: MediaQuery.of(context).size.width * 0.7,
             decoration: const BoxDecoration(
@@ -125,18 +126,13 @@ class BotMessage extends StatelessWidget {
           ),
           SizedBox(
             width: 25,
-            height: 70,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: getSpeech,
-                  icon: const Icon(Icons.volume_down_rounded),
-                  padding: EdgeInsets.zero,
-                  iconSize: 35.0,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ],
+            height: 50,
+            child: IconButton(
+              onPressed: getSpeech,
+              icon: const Icon(Icons.volume_down_rounded),
+              padding: EdgeInsets.zero,
+              iconSize: 35.0,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ],

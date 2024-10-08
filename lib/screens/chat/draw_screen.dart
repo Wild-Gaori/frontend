@@ -7,6 +7,7 @@ import 'package:qnart/widgets/chat/draw_buttons.dart';
 import 'package:qnart/widgets/chat/image_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
+import 'package:qnart/widgets/common/yellow_button.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -80,6 +81,7 @@ class _DrawScreenState extends State<DrawScreen> {
       "Cookie": "csrftoken=$csrfToken",
     };
     final body = jsonEncode({
+      'action': selectedOption,
       'prompt': prompt,
     });
 
@@ -155,17 +157,17 @@ class _DrawScreenState extends State<DrawScreen> {
       isPainting = true;
     });
     print(option);
-    if (option == "경험") {
+    if (option == "experience") {
       _messages.add({
         'sender': 'bot',
         'text': '감상한 그림에 관련된 네 경험에 대해 자세히 말해주면 그림을 그려볼게!',
       });
-    } else if (option == "변경") {
+    } else if (option == "change") {
       _messages.add({
         'sender': 'bot',
         'text': '감상했던 그림에서 바꾸고 싶은 부분을 말해주면 그림을 그려볼게!',
       });
-    } else if (option == "상상") {
+    } else if (option == "imagine") {
       _messages.add({
         'sender': 'bot',
         'text': '감상했던 그림에서 나타나지 않은 부분을 상상해볼까?',
@@ -208,6 +210,9 @@ class _DrawScreenState extends State<DrawScreen> {
               },
             ),
           ),
+          repaintCnt > 3
+              ? YellowButton(text: '종료하기', handlePress: () {})
+              : Container(),
           Container(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -217,8 +222,11 @@ class _DrawScreenState extends State<DrawScreen> {
                     enabled: isPainting,
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText:
-                          _speech.isListening ? '음성 인식 중입니다...' : '메시지를 입력하세요',
+                      hintText: (repaintCnt > 3)
+                          ? "다시 그리기 기회를 모두 소모했어요."
+                          : (_speech.isListening
+                              ? '음성 인식 중입니다...'
+                              : '메시지를 입력하세요'),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.onPrimary,

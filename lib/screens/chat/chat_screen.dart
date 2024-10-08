@@ -30,8 +30,11 @@ class _ChatScreenState extends State<ChatScreen> {
   String _ttsText = '';
   String prompt = '';
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
+    _initChat();
     super.initState();
     _initSpeech();
   }
@@ -46,12 +49,25 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {});
   }
 
+  void _initChat() {
+    setState(() {
+      prompt = "시작";
+    });
+    print(prompt);
+    // _getBotMessage();
+  }
+
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
       setState(() {
         _messages.add({'sender': 'user', 'text': _controller.text});
         prompt = _controller.text;
         _controller.clear();
+        _scrollController.animateTo(
+          curve: Curves.easeInOut,
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+        );
       });
     }
     _getBotMessage();
@@ -81,6 +97,11 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add({'sender': 'bot', 'text': gptResponse});
         });
+        // _scrollController.animateTo(
+        //   curve: Curves.easeInOut,
+        //   _scrollController.position.maxScrollExtent,
+        //   duration: const Duration(milliseconds: 300),
+        // );
       } else {
         print(response.statusCode);
         print(response.body);
@@ -124,6 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
           const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 if (_messages[index]['sender'] == 'user') {

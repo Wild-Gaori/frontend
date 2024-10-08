@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DrawButtons extends StatelessWidget {
-  const DrawButtons({super.key});
+  final Function(String) onSelect;
+
+  const DrawButtons({super.key, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -10,17 +12,23 @@ class DrawButtons extends StatelessWidget {
       child: Column(
         children: [
           DrawButton(
-            handlePress: () {},
+            handlePress: () {
+              onSelect('경험');
+            },
             text: '내 경험으로 그림 그리기',
           ),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 5.0),
           DrawButton(
-            handlePress: () {},
+            handlePress: () {
+              onSelect('변경');
+            },
             text: '작품에서 바꾸고 싶은 부분 바꾸기',
           ),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 5.0),
           DrawButton(
-            handlePress: () {},
+            handlePress: () {
+              onSelect('상상');
+            },
             text: '작품에서 나타나지 않은 부분 상상하기',
           ),
         ],

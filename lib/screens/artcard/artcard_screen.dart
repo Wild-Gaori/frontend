@@ -17,6 +17,7 @@ class ArtCardScreen extends StatefulWidget {
 class _ArtCardScreenState extends State<ArtCardScreen> {
   String hook = "설명";
   String title = "제목";
+  String imgUrl = "";
   int session_id = 0;
 
   Future<void> handleRandom() async {
@@ -26,6 +27,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
 
     final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     setState(() {
+      imgUrl = jsonData["image_url"];
       hook = jsonData["hook"];
       title = jsonData["title"];
       session_id = jsonData["session_id"];
@@ -57,6 +59,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
           const SizedBox(height: 20),
           Center(
               child: ArtCard(
+            imgUrl: imgUrl,
             title: title,
             hook: hook,
           )),

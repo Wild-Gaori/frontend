@@ -29,8 +29,13 @@ class _DrawScreenState extends State<DrawScreen> {
   // final bool _isListening = false;
   bool _speechEnabled = false;
   String _ttsText = '';
+  String prompt = ""; // 달리 프롬프트
 
-  String prompt = "";
+  String selectedOption = ""; // 세가지 방법 중 선택된 것
+  int repaintCnt = 0; // 다시 그리기 사용 횟수
+  bool isPainting = false; // 채팅 입력이 가능한 상태 or 아닌 상태
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -54,9 +59,14 @@ class _DrawScreenState extends State<DrawScreen> {
         _messages.add({'sender': 'user', 'text': _controller.text});
         prompt = _controller.text; // 프롬프트 설정
         _controller.clear();
+        _scrollController.animateTo(
+          curve: Curves.easeInOut,
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+        );
       });
+      _getBotMessage();
     }
-    _getBotMessage();
   }
 
   Future<void> _getBotMessage() async {
@@ -74,12 +84,27 @@ class _DrawScreenState extends State<DrawScreen> {
     });
 
     try {
+      setState(() {
+        _messages.add({'sender': 'bot', 'text': '그림을 그리는 중이야, 잠시만 기다려줘!'});
+        isPainting = false;
+        _scrollController.animateTo(
+          curve: Curves.easeInOut,
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+        );
+      });
       var response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         final dalleResponse = (jsonDecode(response.body))["image_url"];
         print(dalleResponse);
         setState(() {
           _messages.add({'sender': 'image', 'text': dalleResponse});
+          _scrollController.animateTo(
+            curve: Curves.easeInOut,
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+          );
+          isPainting = false;
         });
       } else {
         print(response.statusCode);
@@ -112,6 +137,42 @@ class _DrawScreenState extends State<DrawScreen> {
     });
   }
 
+  void _incrementRepaintCnt() {
+    setState(() {
+      repaintCnt++;
+      isPainting = true;
+    });
+    if (repaintCnt > 3) {
+      isPainting = false;
+    }
+    print(repaintCnt);
+  }
+
+  void _handleSelect(String option) {
+    setState(() {
+      selectedOption = option;
+      _messages.removeWhere((message) => message['sender'] == 'button');
+      isPainting = true;
+    });
+    print(option);
+    if (option == "경험") {
+      _messages.add({
+        'sender': 'bot',
+        'text': '감상한 그림에 관련된 네 경험에 대해 자세히 말해주면 그림을 그려볼게!',
+      });
+    } else if (option == "변경") {
+      _messages.add({
+        'sender': 'bot',
+        'text': '감상했던 그림에서 바꾸고 싶은 부분을 말해주면 그림을 그려볼게!',
+      });
+    } else if (option == "상상") {
+      _messages.add({
+        'sender': 'bot',
+        'text': '감상했던 그림에서 나타나지 않은 부분을 상상해볼까?',
+      });
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,6 +184,7 @@ class _DrawScreenState extends State<DrawScreen> {
           const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 if (_messages[index]['sender'] == 'user') {
@@ -134,9 +196,14 @@ class _DrawScreenState extends State<DrawScreen> {
                     message: _messages[index]['text']!,
                   );
                 } else if (_messages[index]['sender'] == 'button') {
-                  return const DrawButtons();
+                  return DrawButtons(
+                    onSelect: _handleSelect,
+                  );
                 } else {
-                  return ImageMessage(url: _messages[index]['text']!);
+                  return ImageMessage(
+                    url: _messages[index]['text']!,
+                    onRedraw: _incrementRepaintCnt,
+                  );
                 }
               },
             ),
@@ -147,6 +214,7 @@ class _DrawScreenState extends State<DrawScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    enabled: isPainting,
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText:

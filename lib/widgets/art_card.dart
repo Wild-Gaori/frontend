@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 class ArtCard extends StatelessWidget {
   final String hook;
   final String title;
+  final String imgUrl;
 
   const ArtCard({
     super.key,
     required this.hook,
     required this.title,
+    required this.imgUrl,
   });
 
   @override
@@ -37,12 +39,12 @@ class ArtCard extends StatelessWidget {
             Container(
               width: containerWidth * 0.85,
               height: containerHeight * 0.6,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('asset/img/test_art.jpg'),
+                  image: NetworkImage(imgUrl),
                   fit: BoxFit.contain,
                 ),
-                color: Color(0xffe7e7e7),
+                color: const Color(0xffe7e7e7),
               ),
             ),
             Padding(

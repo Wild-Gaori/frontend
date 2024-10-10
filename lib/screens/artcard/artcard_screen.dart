@@ -64,7 +64,9 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
             hook: hook,
           )),
           const SizedBox(height: 20),
-          const BotMessage(message: '이야기를 나눌 준비가 되었다면 아래 버튼을 눌러줘!'),
+          const BotMessage(
+            message: '이야기를 나눌 준비가 되었다면 아래 버튼을 눌러줘!',
+          ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {

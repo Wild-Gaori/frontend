@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/widgets/chat/bot_loading_message.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/chat/draw_buttons.dart';
 import 'package:qnart/widgets/chat/image_message.dart';
@@ -87,26 +88,26 @@ class _DrawScreenState extends State<DrawScreen> {
 
     try {
       setState(() {
-        _messages.add({'sender': 'bot', 'text': '그림을 그리는 중이야, 잠시만 기다려줘!'});
+        _messages.add({'sender': 'bot_loading', 'text': '그림 그리는 중'});
         isPainting = false;
-        _scrollController.animateTo(
-          curve: Curves.easeInOut,
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-        );
       });
+
       var response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         final dalleResponse = (jsonDecode(response.body))["image_url"];
         print(dalleResponse);
         setState(() {
+          _messages
+              .removeWhere((message) => message['sender'] == 'bot_loading');
           _messages.add({'sender': 'image', 'text': dalleResponse});
+          isPainting = false;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollController.animateTo(
-            curve: Curves.easeInOut,
             _scrollController.position.maxScrollExtent,
             duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
           );
-          isPainting = false;
         });
       } else {
         print(response.statusCode);
@@ -200,6 +201,10 @@ class _DrawScreenState extends State<DrawScreen> {
                 } else if (_messages[index]['sender'] == 'button') {
                   return DrawButtons(
                     onSelect: _handleSelect,
+                  );
+                } else if (_messages[index]['sender'] == 'bot_loading') {
+                  return BotLoadingMessage(
+                    message: _messages[index]['text']!,
                   );
                 } else {
                   return ImageMessage(

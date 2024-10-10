@@ -11,7 +11,7 @@ class UserMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 18.0, 40.0, 10.0),
+      padding: const EdgeInsets.fromLTRB(0, 18.0, 46.0, 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

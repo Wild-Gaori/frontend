@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/draw_screen.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/widgets/chat/bot_loading_message.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/chat/show_image_container.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
@@ -34,6 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String _ttsText = '';
   String prompt = '';
   bool isChatting = true;
+  bool isFinished = false;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -70,16 +72,22 @@ class _ChatScreenState extends State<ChatScreen> {
         prompt = _controller.text;
         _controller.clear();
       });
-      _scrollController.animateTo(
-        curve: Curves.easeInOut,
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
     }
     _getBotMessage();
   }
 
   void _getBotMessage() async {
+    setState(() {
+      isChatting = false;
+      _messages.add({'sender': 'bot_loading', 'text': '입력 중'});
+    });
     // GPT 응답 받아오기
     String csrfToken =
         await fetchCsrfToken('http://13.124.100.182/masterpiece/chat/');
@@ -101,17 +109,23 @@ class _ChatScreenState extends State<ChatScreen> {
             (jsonDecode(utf8.decode(response.bodyBytes)))["response"];
         print(gptResponse);
         setState(() {
+          _messages
+              .removeWhere((message) => message['sender'] == 'bot_loading');
           _messages.add({'sender': 'bot', 'text': gptResponse});
+          isChatting = true;
         });
-        _scrollController.animateTo(
-          curve: Curves.easeInOut,
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        });
 
         // 종료 시퀀스
         if (gptResponse.contains('그림 그리러 가자')) {
           setState(() {
+            isFinished = true;
             isChatting = false;
           });
         }
@@ -170,6 +184,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   return BotMessage(
                     message: _messages[index]['text']!,
                   );
+                } else if (_messages[index]['sender'] == 'bot_loading') {
+                  return BotLoadingMessage(
+                    message: _messages[index]['text']!,
+                  );
                 } else {
                   return ShowImageContainer(
                     imgPath: _messages[index]['text']!,
@@ -178,7 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          !isChatting
+          isFinished
               ? YellowButton(
                   text: '그림 그리러 가기',
                   handlePress: () {
@@ -200,8 +218,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     enabled: isChatting,
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText:
-                          _speech.isListening ? '음성 인식 중입니다...' : '메시지를 입력하세요',
+                      hintText: !isChatting
+                          ? '아직 메시지를 입력할 수 없어요'
+                          : (_speech.isListening
+                              ? '음성 인식 중입니다...'
+                              : '메시지를 입력하세요'),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.onPrimary,

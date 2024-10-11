@@ -8,6 +8,7 @@ import 'package:qnart/widgets/common/dialog_ui.dart';
 import 'package:qnart/widgets/common/white_button.dart';
 import 'package:qnart/widgets/common/yellow_button.dart';
 
+// 달리 결과이미지 출력용 이미지 위젯
 class ImageMessage extends StatelessWidget {
   final String url;
   final VoidCallback onRedraw;

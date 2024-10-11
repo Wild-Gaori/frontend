@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/chat/bot_loading_message.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/chat/change_image_selector.dart';
 import 'package:qnart/widgets/chat/draw_buttons.dart';
 import 'package:qnart/widgets/chat/image_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
@@ -166,7 +167,12 @@ class _DrawScreenState extends State<DrawScreen> {
     } else if (option == "change") {
       _messages.add({
         'sender': 'bot',
-        'text': '감상했던 그림에서 바꾸고 싶은 부분을 말해주면 그림을 그려볼게!',
+        'text': '그림에서 바꾸고 싶은 부분을 드래그해서 선택한 뒤, \'선택 완료\'를 눌러줘!',
+      });
+      _messages.add({
+        'sender': 'change_image_selector',
+        'text':
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png',
       });
     } else if (option == "imagine") {
       _messages.add({
@@ -205,6 +211,11 @@ class _DrawScreenState extends State<DrawScreen> {
                 } else if (_messages[index]['sender'] == 'bot_loading') {
                   return BotLoadingMessage(
                     message: _messages[index]['text']!,
+                  );
+                } else if (_messages[index]['sender'] ==
+                    'change_image_selector') {
+                  return ChangeImageSelector(
+                    imgPath: _messages[index]['text']!,
                   );
                 } else {
                   return ImageMessage(

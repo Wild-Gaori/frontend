@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+// 채팅감상시 그림 띄워주기 위해 사용하는 이미지 위젯
 class ShowImageContainer extends StatelessWidget {
   final String imgPath;
 

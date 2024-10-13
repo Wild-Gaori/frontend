@@ -21,8 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: basicThemeData(),
-      home: const DrawScreen(), // 홈 화면 설정
-    );
+        theme: basicThemeData(), home: const ArtCardScreen() // 홈 화면 설정
+        );
   }
 }

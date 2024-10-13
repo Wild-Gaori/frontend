@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
@@ -14,9 +15,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 class DrawScreen extends StatefulWidget {
-  const DrawScreen({super.key});
+  final int artworkId;
+  final String imgPath;
+  const DrawScreen({super.key, required this.artworkId, required this.imgPath});
 
   @override
   State<DrawScreen> createState() => _DrawScreenState();
@@ -33,6 +37,7 @@ class _DrawScreenState extends State<DrawScreen> {
   bool _speechEnabled = false;
   String _ttsText = '';
   String prompt = ""; // 달리 프롬프트
+  String? maskImage;
 
   String selectedOption = ""; // 세가지 방법 중 선택된 것
   int repaintCnt = 0; // 다시 그리기 사용 횟수
@@ -73,19 +78,12 @@ class _DrawScreenState extends State<DrawScreen> {
   }
 
   Future<void> _getBotMessage() async {
+    print('id: ${widget.artworkId}');
     // dalle 응답 받아오기
     String csrfToken =
         await fetchCsrfToken('http://13.124.100.182/imagegen/generate/');
     final url = Uri.parse('http://13.124.100.182/imagegen/generate/');
-    var headers = {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
-      "Cookie": "csrftoken=$csrfToken",
-    };
-    final body = jsonEncode({
-      'action': selectedOption,
-      'prompt': prompt,
-    });
+    final editUrl = Uri.parse('http://13.124.100.182/imagegen/generate/edit/');
 
     try {
       setState(() {
@@ -93,26 +91,86 @@ class _DrawScreenState extends State<DrawScreen> {
         isPainting = false;
       });
 
-      var response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final dalleResponse = (jsonDecode(response.body))["image_url"];
-        print(dalleResponse);
-        setState(() {
-          _messages
-              .removeWhere((message) => message['sender'] == 'bot_loading');
-          _messages.add({'sender': 'image', 'text': dalleResponse});
-          isPainting = false;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        });
+      if (selectedOption == "change") {
+        var headers = {
+          "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+          "Cookie": "csrftoken=$csrfToken",
+        };
+
+        // edit api호출
+        var request = http.MultipartRequest('POST', editUrl);
+        request.headers.addAll(headers);
+        request.fields['prompt'] = prompt;
+        request.fields['artwork_id'] = widget.artworkId.toString();
+
+        // mask_image 파일을 multipart로 추가
+        if (maskImage != null) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'mask_image',
+            maskImage!, // 파일 경로
+            filename: basename(maskImage!), // 파일 이름 설정
+          ));
+          print('maskImage : $maskImage');
+        }
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          var responseData = await http.Response.fromStream(response);
+          final dalleResponse =
+              (jsonDecode(responseData.body))["edited_image_url"];
+          print(dalleResponse);
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({'sender': 'image', 'text': dalleResponse});
+            isPainting = false;
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
+        } else {
+          print(response.statusCode);
+          var responseBody = await response.stream.bytesToString();
+          print(responseBody);
+        }
       } else {
-        print(response.statusCode);
-        print(response.body);
+        // 그외 (일반 imagegen/generator)
+        var headers = {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+          "Cookie": "csrftoken=$csrfToken",
+        };
+
+        final body = jsonEncode({
+          'action': selectedOption,
+          'prompt': prompt,
+          'artwork_id': widget.artworkId,
+        });
+        var response = await http.post(url, headers: headers, body: body);
+        if (response.statusCode == 200) {
+          final dalleResponse = (jsonDecode(response.body))["image_url"];
+          print(dalleResponse);
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({'sender': 'image', 'text': dalleResponse});
+            isPainting = false;
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
+        } else {
+          print(response.statusCode);
+          print(response.body);
+        }
       }
     } finally {}
   }
@@ -165,14 +223,16 @@ class _DrawScreenState extends State<DrawScreen> {
         'text': '감상한 그림에 관련된 네 경험에 대해 자세히 말해주면 그림을 그려볼게!',
       });
     } else if (option == "change") {
+      setState(() {
+        isPainting = false;
+      });
       _messages.add({
         'sender': 'bot',
         'text': '그림에서 바꾸고 싶은 부분을 드래그해서 선택한 뒤, \'선택 완료\'를 눌러줘!',
       });
       _messages.add({
         'sender': 'change_image_selector',
-        'text':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png',
+        'text': widget.imgPath,
       });
     } else if (option == "imagine") {
       _messages.add({
@@ -180,6 +240,19 @@ class _DrawScreenState extends State<DrawScreen> {
         'text': '감상했던 그림에서 나타나지 않은 부분을 상상해볼까?',
       });
     } else {}
+  }
+
+  void onFinished(Future<String> maskedBytesPath) async {
+    String maskedFile = await maskedBytesPath;
+    // edit 영역 선택 완료
+    setState(() {
+      maskImage = maskedFile;
+      isPainting = true;
+    });
+    _messages.add({
+      'sender': 'bot',
+      'text': '선택한 부분을 어떻게 바꾸고 싶은지 알려줘!',
+    });
   }
 
   @override
@@ -216,6 +289,7 @@ class _DrawScreenState extends State<DrawScreen> {
                     'change_image_selector') {
                   return ChangeImageSelector(
                     imgPath: _messages[index]['text']!,
+                    onFinished: onFinished,
                   );
                 } else {
                   return ImageMessage(

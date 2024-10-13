@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/chat_screen.dart';
 import 'package:qnart/widgets/art_card.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
+import 'package:qnart/widgets/common/dialog_drawing_ui.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,6 +20,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
   String title = "제목";
   String imgPath = "";
   int session_id = 0;
+  int id = 0; // artwort id
 
   Future<void> handleRandom() async {
     final url = Uri.parse("http://13.124.100.182/masterpiece/random/");
@@ -31,6 +33,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
       hook = jsonData["hook"];
       title = jsonData["title"];
       session_id = jsonData["session_id"];
+      id = jsonData["id"];
     });
   }
 
@@ -76,6 +79,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
                     builder: (context) => ChatScreen(
                           sessionId: session_id,
                           imgPath: imgPath,
+                          artworkId: id,
                         )),
               );
             },

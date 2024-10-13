@@ -5,13 +5,18 @@ import 'package:flutter/material.dart';
 class YellowButton extends StatelessWidget {
   final String text;
   final FutureOr<void> Function() handlePress;
-  const YellowButton(
-      {super.key, required this.text, required this.handlePress});
+  final bool enabled;
+  const YellowButton({
+    super.key,
+    required this.text,
+    required this.handlePress,
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: handlePress,
+      onPressed: enabled ? handlePress : null,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),

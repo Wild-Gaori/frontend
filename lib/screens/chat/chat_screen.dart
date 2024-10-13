@@ -17,8 +17,13 @@ import 'package:http/http.dart' as http;
 class ChatScreen extends StatefulWidget {
   final int sessionId;
   final String imgPath;
+  final int artworkId;
 
-  const ChatScreen({super.key, required this.sessionId, required this.imgPath});
+  const ChatScreen(
+      {super.key,
+      required this.sessionId,
+      required this.imgPath,
+      required this.artworkId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -203,7 +208,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const DrawScreen(),
+                        builder: (context) => DrawScreen(
+                          artworkId: widget.artworkId,
+                          imgPath: widget.imgPath,
+                        ),
                       ),
                     );
                   },

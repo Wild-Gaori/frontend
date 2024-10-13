@@ -7,14 +7,18 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
 import 'package:http/http.dart' as http;
+import 'package:qnart/utils/resize_image.dart';
+import 'package:qnart/widgets/common/dialog_drawing_ui.dart';
 import 'package:qnart/widgets/common/yellow_button.dart';
 
 class ChangeImageSelector extends StatefulWidget {
   final String imgPath;
+  final Function(Future<String>) onFinished;
 
   const ChangeImageSelector({
     super.key,
     required this.imgPath,
+    required this.onFinished,
   });
 
   @override
@@ -25,17 +29,35 @@ class _ChangeImageSelectorState extends State<ChangeImageSelector> {
   Offset? startDrag;
   Offset? currentDrag;
   Rect? selectedRect;
+  bool isEnabled = true;
 
   Future<img.Image> processImage(Rect selectedRect) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const DialogDrawingUI();
+      },
+    );
+
     print(selectedRect);
     final response = await http.get(Uri.parse(widget.imgPath));
+    print('response type : ${response.headers['content-type']}');
 
     if (response.statusCode == 200) {
       // 네트워크로부터 받은 이미지 데이터를 Uint8List로 변환
       final Uint8List bytes = response.bodyBytes;
+      print('Image size: ${bytes.length} bytes');
 
       // 이미지 패키지를 이용해 이미지를 디코딩
-      final img.Image originalImage = img.decodeImage(bytes)!;
+      img.Image originalImage = img.decodeImage(bytes)!;
+      print(
+          'Decoded image size: ${originalImage.width}x${originalImage.height}');
+
+      if (!originalImage.hasAlpha) {
+        print('알파 채널이 없는 이미지, RGBA로 변환 중...');
+        originalImage = originalImage.convert(numChannels: 4, alpha: 255);
+      }
 
       double scaleX = originalImage.width / 300;
       double scaleY = originalImage.height / 300;
@@ -55,12 +77,18 @@ class _ChangeImageSelectorState extends State<ChangeImageSelector> {
             pixel.y <= actualRect.bottom) {
           // 투명하게 설정 (알파 값 0으로 설정하여 투명도 적용)
           // print('pixel x/y is ${pixel.x}, ${pixel.y}');
-          pixel.r = 0;
+          pixel.r = 255;
           pixel.g = 0;
           pixel.b = 0;
           pixel.a = 0;
         }
       }
+
+      // print('Resized Image size: ${originalImage.getBytes().length} bytes');
+
+      originalImage = resizeImageCustom(originalImage, 4 * 1024 * 1024);
+
+      Navigator.pop(context);
 
       return originalImage;
     } else {
@@ -68,7 +96,7 @@ class _ChangeImageSelectorState extends State<ChangeImageSelector> {
     }
   }
 
-  Future<File> saveImage(img.Image maskedImage) async {
+  Future<String> saveImage(img.Image maskedImage) async {
     final png = img.encodePng(maskedImage); //uint8list file
     print(png);
 
@@ -76,9 +104,8 @@ class _ChangeImageSelectorState extends State<ChangeImageSelector> {
     final filePath = '${directory.path}/masked_output.png';
     final file = File(filePath);
     await file.writeAsBytes(png);
-    final result = await ImageGallerySaver.saveImage(png);
     print('이미지가 저장되었습니다: $filePath');
-    return file;
+    return filePath;
   }
 
   @override
@@ -140,14 +167,17 @@ class _ChangeImageSelectorState extends State<ChangeImageSelector> {
               ),
             ),
             YellowButton(
+                enabled: isEnabled,
                 text: '선택 완료',
                 handlePress: () async {
                   if (selectedRect == null) {
                     return;
                   } else {
-                    final Future<File> maskedBytes =
+                    final Future<String> maskedBytesPath =
                         saveImage(await processImage(selectedRect!));
-                    print(maskedBytes);
+                    print(maskedBytesPath);
+                    widget.onFinished(maskedBytesPath);
+                    isEnabled = false;
                   }
                 }),
             const SizedBox(height: 15),

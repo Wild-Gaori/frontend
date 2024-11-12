@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/chat_screen.dart';
+import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/art_card.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/common/dialog_drawing_ui.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ArtCardScreen extends StatefulWidget {
   const ArtCardScreen({super.key});
@@ -21,11 +23,24 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
   String imgPath = "";
   int session_id = 0;
   int id = 0; // artwort id
+  int? selectedDocentId;
+  int? userPk;
 
   Future<void> handleRandom() async {
-    final url = Uri.parse("http://13.124.100.182/masterpiece/random/");
-    final response = await http.get(url);
-    print(response.body);
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    userPk = pref.getInt('user_pk');
+    const apiUrl = "http://13.124.100.182/masterpiece/random/";
+    String csrfToken = await fetchCsrfToken(apiUrl);
+    final url = Uri.parse(apiUrl);
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_pk': userPk,
+    });
+    final response = await http.post(url, headers: headers, body: body);
 
     final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     setState(() {
@@ -34,6 +49,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
       title = jsonData["title"];
       session_id = jsonData["session_id"];
       id = jsonData["id"];
+      selectedDocentId = jsonData["selected_docent_id"];
     });
   }
 

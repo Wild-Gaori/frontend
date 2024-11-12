@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/chat/draw_screen.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/utils/get_user_pk.dart';
 import 'package:qnart/widgets/chat/bot_loading_message.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/chat/show_image_container.dart';
@@ -41,6 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String prompt = '';
   bool isChatting = true;
   bool isFinished = false;
+  int? userPk;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -49,6 +51,15 @@ class _ChatScreenState extends State<ChatScreen> {
     _initChat();
     super.initState();
     _initSpeech();
+    _loadUserPk();
+  }
+
+  Future<void> _loadUserPk() async {
+    // getUserPk 함수 호출 후 결과를 userPk에 설정
+    int pk = await getUserPk();
+    setState(() {
+      userPk = pk;
+    });
   }
 
   void _initSpeech() async {
@@ -103,6 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
       "Cookie": "csrftoken=$csrfToken",
     };
     final body = jsonEncode({
+      'user_pk': userPk,
       'session_id': widget.sessionId,
       'message': prompt,
     });

@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/widgets/common/dialog_ui.dart';
 import 'package:qnart/widgets/common/inituserinfo.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/mypage/mypage_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class UserInfoScreen extends StatefulWidget {
   const UserInfoScreen({super.key});
@@ -14,11 +19,18 @@ class UserInfoScreen extends StatefulWidget {
 class _UserInfoScreenState extends State<UserInfoScreen> {
   int? userPk;
 
+  final TextEditingController nicknameController = TextEditingController();
+  final TextEditingController birthdateController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final TextEditingController clothingController = TextEditingController();
+  final TextEditingController hairStyleController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getUserPk();
+    getUserInfo();
   }
 
   Future<void> getUserPk() async {
@@ -30,17 +42,84 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   }
 
   Future<void> getUserInfo() async {
-    var url = Uri.parse('http://13.124.100.182/account/update-userprofile/');
+    // 화면 접속 시 유저 정보 가져오기
+    var apiUrl = "http://13.124.100.182/account/get-user-profile/";
+    String csrfToken = await fetchCsrfToken(apiUrl);
+    var url = Uri.parse(apiUrl); // 유저 정보 가져오기 API
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_pk': userPk,
+    });
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonData =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        print(jsonData);
+        setState(() {
+          nicknameController.text = (jsonData["nickname"]);
+          birthdateController.text = jsonData["birthdate"];
+          genderController.text = jsonData["gender"];
+          clothingController.text = jsonData["clothing"];
+          hairStyleController.text = jsonData["hairstyle"];
+        });
+      } else {
+        print(response.body);
+        print(response.statusCode);
+      }
+    } finally {}
+  }
+
+  void showCustomDialog(String dialogMessage) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogUI(
+            dialogMessage: dialogMessage,
+          );
+        });
+  }
+
+  void setUserInfo() async {
+    final Map<String, String> modifiedUserInfo = {
+      'nickname': nicknameController.text,
+      'birthdate': birthdateController.text,
+      'gender': genderController.text,
+      'clothing': clothingController.text,
+      'hairstyle': hairStyleController.text,
+    };
+    var apiUrl = "http://13.124.100.182/account/update-profile/";
+    String csrfToken = await fetchCsrfToken(apiUrl);
+    var url = Uri.parse(apiUrl); // 유저 정보 가져오기 API
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_pk': userPk,
+      'profile_data': modifiedUserInfo,
+    });
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        showCustomDialog("내 정보를 수정했어요.");
+      } else {
+        print(response.statusCode);
+        String decodedResponse = utf8.decode(response.bodyBytes);
+        print("Failed to update user information: $decodedResponse");
+      }
+    } finally {}
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nicknameController = TextEditingController();
-    final TextEditingController birthdateController = TextEditingController();
-    final TextEditingController genderController = TextEditingController();
-    final TextEditingController clothingController = TextEditingController();
-    final TextEditingController hairStyleController = TextEditingController();
-
     final List<Map<String, TextEditingController>> initMessages = [
       {"내 이름은": nicknameController},
       {"생년월일은": birthdateController},
@@ -75,7 +154,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 child: Center(child: InputUserInfo(initMessages: initMessages)),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: setUserInfo,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),

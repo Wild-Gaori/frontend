@@ -7,6 +7,30 @@ allprojects {
 
 rootProject.buildDir = '../build'
 subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") ||
+                project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                compileSdkVersion 34
+                buildToolsVersion "34.0.0"
+            }
+        }
+    }
+}
+
+// subprojects {
+//     afterEvaluate { project ->
+//         if (project.plugins.hasPlugin("com.android.application") ||
+//                 project.plugins.hasPlugin("com.android.library")) {
+//             project.android {
+//                 compileSdkVersion 34
+//                 buildToolsVersion "34.0.0"
+//             }
+//         }
+//     }
+// }
+
+subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
@@ -16,3 +40,16 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+buildscript {
+    ext.kotlin_version = "1.8.0" // 적합한 최신 버전으로 변경
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+

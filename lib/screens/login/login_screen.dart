@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qnart/screens/home_screen.dart';
 import 'package:qnart/screens/login/signup_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -161,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> handleLogin() async {
-    var url = Uri.parse('http://13.124.100.182/');
+    var url = Uri.parse('http://13.124.100.182/account/login');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함
@@ -176,7 +175,9 @@ class _LoginScreenState extends State<LoginScreen> {
       var response = await http.post(url, headers: headers, body: body);
       print(response.statusCode);
       if (response.statusCode == 200) {
-        print(response.body);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        int userPk = jsonDecode(response.body)["user_pk"];
+        await prefs.setInt('user_pk', userPk); //userPk 저장
         if (mounted) {
           Navigator.push(
             context,

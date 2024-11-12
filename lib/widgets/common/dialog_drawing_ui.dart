@@ -21,7 +21,7 @@ class DialogDrawingUI extends StatelessWidget {
           children: [
             Image.asset(
               'asset/img/logo/pic_logo.png',
-              width: 150,
+              width: 170,
             ),
             const Text(
               "이미지를 처리하는 중입니다...",

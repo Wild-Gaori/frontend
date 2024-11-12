@@ -6,7 +6,7 @@ class InputUserInfo extends StatelessWidget {
     required this.initMessages,
   });
 
-  final List<String> initMessages;
+  final List<Map<String, TextEditingController>> initMessages;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class InputUserInfo extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        msg,
+                        msg.keys.first,
                       ),
                     ),
                     Padding(
@@ -33,6 +33,7 @@ class InputUserInfo extends StatelessWidget {
                         width: 100,
                         height: 40,
                         child: TextField(
+                          controller: msg.values.first,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: BorderSide(

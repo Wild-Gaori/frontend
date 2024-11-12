@@ -11,6 +11,7 @@ import 'package:qnart/widgets/chat/image_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
 import 'package:qnart/widgets/common/yellow_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -78,6 +79,8 @@ class _DrawScreenState extends State<DrawScreen> {
   }
 
   Future<void> _getBotMessage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int? userPk = prefs.getInt('user_pk');
     print('id: ${widget.artworkId}');
     // dalle 응답 받아오기
     String csrfToken =
@@ -133,12 +136,64 @@ class _DrawScreenState extends State<DrawScreen> {
             );
           });
         } else {
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({
+              'sender': 'bot',
+              'text': '그림 생성에 실패했어요. code: ${response.statusCode}'
+            });
+            isPainting = true;
+          });
           print(response.statusCode);
           var responseBody = await response.stream.bytesToString();
           print(responseBody);
         }
+      } else if (selectedOption == "experience") {
+        // 경험으로 그리기
+        var headers = {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+          "Cookie": "csrftoken=$csrfToken",
+        };
+
+        final body = jsonEncode({
+          'user_pk': userPk,
+          'action': selectedOption,
+          'prompt': prompt,
+        });
+        var response = await http.post(url, headers: headers, body: body);
+        if (response.statusCode == 200) {
+          final dalleResponse = (jsonDecode(response.body))["image_url"];
+          print(dalleResponse);
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({'sender': 'image', 'text': dalleResponse});
+            isPainting = false;
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
+        } else {
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({
+              'sender': 'bot',
+              'text': '그림 생성에 실패했어요. code: ${response.statusCode}'
+            });
+            isPainting = true;
+          });
+          print(response.statusCode);
+          print(response.body);
+        }
       } else {
-        // 그외 (일반 imagegen/generator)
+        // 상상
         var headers = {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken, // CSRF 토큰 포함
@@ -168,6 +223,15 @@ class _DrawScreenState extends State<DrawScreen> {
             );
           });
         } else {
+          setState(() {
+            _messages
+                .removeWhere((message) => message['sender'] == 'bot_loading');
+            _messages.add({
+              'sender': 'bot',
+              'text': '그림 생성에 실패했어요. code: ${response.statusCode}'
+            });
+            isPainting = true;
+          });
           print(response.statusCode);
           print(response.body);
         }
@@ -228,7 +292,8 @@ class _DrawScreenState extends State<DrawScreen> {
       });
       _messages.add({
         'sender': 'bot',
-        'text': '그림에서 바꾸고 싶은 부분을 드래그해서 선택한 뒤, \'선택 완료\'를 눌러줘!',
+        'text':
+            '그림에서 바꾸고 싶은 부분을 드래그해서 선택한 뒤, \'선택 완료\'를 눌러줘! 선택 영역은 너무 크지 않은 것이 좋아.',
       });
       _messages.add({
         'sender': 'change_image_selector',
@@ -251,7 +316,7 @@ class _DrawScreenState extends State<DrawScreen> {
     });
     _messages.add({
       'sender': 'bot',
-      'text': '선택한 부분을 어떻게 바꾸고 싶은지 알려줘!',
+      'text': '선택한 부분을 어떻게 바꾸고 싶은지 알려줘! ',
     });
   }
 

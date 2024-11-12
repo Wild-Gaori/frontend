@@ -6,18 +6,24 @@ import 'package:qnart/screens/init/init_first_screen.dart';
 import 'package:qnart/widgets/common/inituserinfo.dart';
 
 class InitLetterScreen extends StatelessWidget {
-  InitLetterScreen({super.key});
-
-  final List<String> initMessages = [
-    "내 이름은",
-    "생년월일은",
-    "성별은",
-    "내 옷은",
-    "내 머리 모양은",
-  ];
+  const InitLetterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nicknameController = TextEditingController();
+    final TextEditingController birthdateController = TextEditingController();
+    final TextEditingController genderController = TextEditingController();
+    final TextEditingController clothingController = TextEditingController();
+    final TextEditingController hairStyleController = TextEditingController();
+
+    final List<Map<String, TextEditingController>> initMessages = [
+      {"내 이름은": nicknameController},
+      {"생년월일은": birthdateController},
+      {"성별은": genderController},
+      {"내 옷은": clothingController},
+      {"내 머리 모양은": hairStyleController},
+    ];
+
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,

@@ -64,7 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _initChat() {
     setState(() {
       _messages.add({'sender': 'image', 'text': widget.imgPath});
-      prompt = "시작";
+      prompt = "시작. 반말로 진행하세요";
     });
     print(prompt);
     _getBotMessage();
@@ -135,6 +135,15 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         }
       } else {
+        setState(() {
+          _messages
+              .removeWhere((message) => message['sender'] == 'bot_loading');
+          _messages.add({
+            'sender': 'bot',
+            'text': '채팅 불러오기에 실패했어요. code: ${response.statusCode}'
+          });
+          isChatting = true;
+        });
         print(response.statusCode);
         print(response.body);
       }

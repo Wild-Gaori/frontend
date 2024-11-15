@@ -21,7 +21,12 @@ import 'package:path/path.dart';
 class DrawScreen extends StatefulWidget {
   final int artworkId;
   final String imgPath;
-  const DrawScreen({super.key, required this.artworkId, required this.imgPath});
+  final int sessionId;
+  const DrawScreen(
+      {super.key,
+      required this.artworkId,
+      required this.imgPath,
+      required this.sessionId});
 
   @override
   State<DrawScreen> createState() => _DrawScreenState();
@@ -103,8 +108,10 @@ class _DrawScreenState extends State<DrawScreen> {
         // edit api호출
         var request = http.MultipartRequest('POST', editUrl);
         request.headers.addAll(headers);
+        request.fields['user_pk'] = userPk.toString();
         request.fields['prompt'] = prompt;
         request.fields['artwork_id'] = widget.artworkId.toString();
+        request.fields['session_id'] = widget.sessionId.toString();
 
         // mask_image 파일을 multipart로 추가
         if (maskImage != null) {
@@ -161,6 +168,7 @@ class _DrawScreenState extends State<DrawScreen> {
           'user_pk': userPk,
           'action': selectedOption,
           'prompt': prompt,
+          'session_id': widget.sessionId,
         });
         var response = await http.post(url, headers: headers, body: body);
         if (response.statusCode == 200) {
@@ -201,9 +209,11 @@ class _DrawScreenState extends State<DrawScreen> {
         };
 
         final body = jsonEncode({
+          'user_pk': userPk,
           'action': selectedOption,
           'prompt': prompt,
           'artwork_id': widget.artworkId,
+          'session_id': widget.sessionId,
         });
         var response = await http.post(url, headers: headers, body: body);
         if (response.statusCode == 200) {

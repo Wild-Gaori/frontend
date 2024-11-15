@@ -15,22 +15,22 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
-class ChatScreen extends StatefulWidget {
-  final String imgPath;
-  final int artworkId;
-  final int sessionId;
+class ArtChatScreen extends StatefulWidget {
+  final String imagePath; //image path
+  final int sessionId; //세션 id
+  final int artworkId; //작품 id
 
-  const ChatScreen(
+  const ArtChatScreen(
       {super.key,
-      required this.imgPath,
-      required this.artworkId,
-      required this.sessionId});
+      required this.imagePath,
+      required this.sessionId,
+      required this.artworkId});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ArtChatScreen> createState() => _ArtChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ArtChatScreenState extends State<ArtChatScreen> {
   final List<Map<String, String>> _messages = [
     {'sender': 'bot', 'text': '안녕! 오늘은 이 그림에 대해 이야기해볼까? 먼저 그림을 천천히 감상해보자!'}
   ]; // 발신자-메시지 저장
@@ -74,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _initChat() {
     setState(() {
-      _messages.add({'sender': 'image', 'text': widget.imgPath});
+      _messages.add({'sender': 'image', 'text': widget.imagePath});
       prompt = "시작. 반말로 진행하세요";
     });
     print(prompt);
@@ -184,7 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialPageRoute(
             builder: (context) => DrawScreen(
               artworkId: widget.artworkId,
-              imgPath: widget.imgPath,
+              imgPath: widget.imagePath,
               sessionId: copiedSessionId,
             ),
           ),

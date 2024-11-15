@@ -21,10 +21,10 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
   String hook = "설명";
   String title = "제목";
   String imgPath = "";
-  int session_id = 0;
   int id = 0; // artwort id
   int? selectedDocentId;
   int? userPk;
+  int sessionId = 0;
 
   Future<void> handleRandom() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
@@ -39,6 +39,7 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
     };
     final body = jsonEncode({
       'user_pk': userPk,
+      'excluded_artwork_ids': [],
     });
     final response = await http.post(url, headers: headers, body: body);
 
@@ -47,9 +48,9 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
       imgPath = jsonData["image_path"];
       hook = jsonData["hook"];
       title = jsonData["title"];
-      session_id = jsonData["session_id"];
       id = jsonData["id"];
       selectedDocentId = jsonData["selected_docent_id"];
+      sessionId = jsonData["session_id"];
     });
   }
 
@@ -93,9 +94,9 @@ class _ArtCardScreenState extends State<ArtCardScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ChatScreen(
-                          sessionId: session_id,
                           imgPath: imgPath,
                           artworkId: id,
+                          sessionId: sessionId,
                         )),
               );
             },

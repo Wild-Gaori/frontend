@@ -34,8 +34,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> checkAvailability() async {
     String csrfToken = await fetchCsrfToken(
-        'http://13.124.100.182/signup/?action=check_username/');
-    var url = Uri.parse('http://13.124.100.182/signup/?action=check_username/');
+        'http://13.124.100.182/account/signup/?action=check_username/');
+    var url = Uri.parse(
+        'http://13.124.100.182/account/signup/?action=check_username/');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함
@@ -50,14 +51,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (response.statusCode == 200) {
       showCustomDialog('사용 가능한 아이디입니다.');
     } else {
+      print(response.statusCode);
+      print(response.body);
       showCustomDialog('사용 불가한 아이디입니다.\n다른 아이디를 사용해주세요.');
     }
   }
 
   Future<void> handleSignup(BuildContext context) async {
-    String csrfToken =
-        await fetchCsrfToken('http://13.124.100.182/signup/?action=signup/');
-    var url = Uri.parse('http://13.124.100.182/signup/?action=signup/');
+    String csrfToken = await fetchCsrfToken(
+        'http://13.124.100.182/account/signup/?action=signup/');
+    var url = Uri.parse('http://13.124.100.182/account/signup/?action=signup/');
     var headers = {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken, // CSRF 토큰 포함

@@ -12,7 +12,7 @@ class MuseumScreen2 extends StatelessWidget {
     return const Scaffold(
       appBar: MainAppBar(),
       body: MuseumContainer(
-        title: '선택한 미술관명',
+        title: '국립현대미술관 서울',
         childComponent: Column(
           children: [
             FloorInfo(),

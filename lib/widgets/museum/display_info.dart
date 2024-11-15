@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qnart/screens/museum/museum3_screen.dart';
+import 'package:qnart/screens/museum/exhibition_detail_screen.dart';
 import 'package:qnart/utils/size_config.dart';
 
 class DisplayInfo extends StatefulWidget {
@@ -26,7 +26,7 @@ class _DisplayInfoState extends State<DisplayInfo> {
 
     return Container(
       width: SizeConfig.screenWidth,
-      height: SizeConfig.screenHeight * 0.3,
+      height: SizeConfig.screenHeight * 0.4,
       decoration: const BoxDecoration(
         color: Colors.white,
       ),
@@ -36,9 +36,6 @@ class _DisplayInfoState extends State<DisplayInfo> {
           Row(
             children: [
               //임시...
-              _buildDisplayButton(0),
-              _buildDisplayButton(1),
-              _buildDisplayButton(2),
               _buildDisplayButton(3),
             ],
           ),
@@ -49,24 +46,26 @@ class _DisplayInfoState extends State<DisplayInfo> {
               Container(
                 //포스터
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                  horizontal: 10,
                 ),
                 child: Image.asset(
-                  'asset/img/pattern.png',
-                  width: 130,
-                  height: 150,
+                  'asset/img/museum/exhibition_main.png',
+                  width: 170,
+                  height: 200,
                   fit: BoxFit.contain,
                 ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '전시 제목',
+                    '이강소: \n風來水面時 풍래수면시',
                     style: TextStyle(
                       fontSize: 20,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
+                    softWrap: true,
                   ),
                   const SizedBox(
                     height: 10,
@@ -79,7 +78,8 @@ class _DisplayInfoState extends State<DisplayInfo> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MuseumScreen3()),
+                              builder: (context) =>
+                                  const ExhibitDetailScreen()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -112,7 +112,7 @@ class _DisplayInfoState extends State<DisplayInfo> {
           border: Border(
             bottom: BorderSide(
               color: selectedFloor == floor
-                  ? Theme.of(context).colorScheme.onPrimary
+                  ? Theme.of(context).colorScheme.primary
                   : Colors.grey[400]!,
               width: 2.0,
             ),

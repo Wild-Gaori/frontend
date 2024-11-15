@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qnart/screens/museum/museum2_screen.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/museum/museum_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MuseumScreen1 extends StatelessWidget {
   const MuseumScreen1({super.key});
@@ -17,7 +18,7 @@ class MuseumScreen1 extends StatelessWidget {
         title: '미술관 목록',
         childComponent: Expanded(
           child: ListView.builder(
-            itemCount: 5,
+            itemCount: 1,
             itemBuilder: (context, index) {
               return const MuseumBtn();
             },
@@ -64,7 +65,7 @@ class MuseumBtn extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'asset/img/pattern.png',
+                    'asset/img/museum/mmca_logo.png',
                     width: 60,
                     height: 60,
                   ),
@@ -74,7 +75,7 @@ class MuseumBtn extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '미술관 이름',
+                        '국립현대미술관 서울',
                         style: TextStyle(
                             fontSize: 20,
                             color: Theme.of(context).colorScheme.onPrimary),
@@ -84,17 +85,20 @@ class MuseumBtn extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 30,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final Uri url =
+                                Uri.parse('https://www.mmca.go.kr/');
+                            if (!await launchUrl(url)) {
+                              throw Exception('Could not launch $url');
+                            }
+                          },
                           child: Text(
-                            '홈페이지',
+                            '홈페이지 바로가기',
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.onPrimary,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),

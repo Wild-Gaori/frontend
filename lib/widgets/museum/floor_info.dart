@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qnart/utils/size_config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FloorInfo extends StatefulWidget {
   const FloorInfo({
@@ -25,7 +26,7 @@ class _FloorInfoState extends State<FloorInfo> {
 
     return Container(
       width: SizeConfig.screenWidth,
-      height: SizeConfig.screenHeight * 0.4,
+      height: SizeConfig.screenHeight * 0.35,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
@@ -42,10 +43,16 @@ class _FloorInfoState extends State<FloorInfo> {
                   _buildFloorButton(0),
                   _buildFloorButton(1),
                   _buildFloorButton(2),
+                  _buildFloorButton(3),
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final Uri url = Uri.parse('https://www.mmca.go.kr/');
+                  if (!await launchUrl(url)) {
+                    throw Exception('Could not launch $url');
+                  }
+                },
                 child: Text(
                   '홈페이지',
                   style: TextStyle(
@@ -63,7 +70,9 @@ class _FloorInfoState extends State<FloorInfo> {
               color: Colors.grey,
             ),
             child: Image.asset(
-              'asset/img/pattern.png',
+              selectedFloor == 0
+                  ? 'asset/img/museum/floor_b1.png'
+                  : 'asset/img/museum/floor_$selectedFloor.png',
               width: 320,
               height: 210,
               fit: BoxFit.contain,
@@ -83,13 +92,13 @@ class _FloorInfoState extends State<FloorInfo> {
           border: Border(
             bottom: BorderSide(
               color: selectedFloor == floor
-                  ? Theme.of(context).colorScheme.onPrimary
+                  ? Theme.of(context).colorScheme.primary
                   : Colors.grey[400]!,
               width: 2.0,
             ),
           ),
         ),
-        child: Text('$floor층'),
+        child: floor == 0 ? const Text('B1층') : Text('$floor층'),
       ),
     );
   }

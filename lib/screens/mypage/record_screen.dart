@@ -49,6 +49,7 @@ class _RecordScreenState extends State<RecordScreen> {
     };
     final body = jsonEncode({
       'user_pk': userPk,
+      'action': 'comleted',
     });
     try {
       final response = await http.post(url, headers: headers, body: body);

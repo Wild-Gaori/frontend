@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:qnart/screens/chat/draw_screen.dart';
+import 'package:qnart/screens/museum/exhibition/art_draw_screen.dart';
 import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/utils/get_user_pk.dart';
 import 'package:qnart/widgets/chat/bot_loading_message.dart';
@@ -182,7 +182,7 @@ class _ArtChatScreenState extends State<ArtChatScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DrawScreen(
+            builder: (context) => ArtDrawScreen(
               artworkId: widget.artworkId,
               imgPath: widget.imagePath,
               sessionId: copiedSessionId,

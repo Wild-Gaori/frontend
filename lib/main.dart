@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: basicThemeData(), home: const ExhibitDetailScreen(), // 홈 화면 설정
+      theme: basicThemeData(), home: const DevMainScreen(), // 홈 화면 설정
     );
   }
 }

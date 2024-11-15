@@ -178,27 +178,32 @@ class RecordBtn extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        artist,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xff020D50),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          artist,
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xff020D50),
+                          ),
                         ),
-                      ),
-                      Text(
-                        title,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Color(0xff020D50),
+                        Text(
+                          title,
+                          textAlign: TextAlign.start,
+                          softWrap: true,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff020D50),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

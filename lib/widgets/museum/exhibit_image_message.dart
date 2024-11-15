@@ -5,16 +5,17 @@ import 'package:flutter/rendering.dart';
 import 'package:dio/dio.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:qnart/screens/home_screen.dart';
+import 'package:qnart/screens/museum/exhibition/art_list_screen.dart';
 import 'package:qnart/widgets/common/dialog_ui.dart';
 import 'package:qnart/widgets/common/white_button.dart';
 import 'package:qnart/widgets/common/yellow_button.dart';
 
 // 달리 결과이미지 출력용 이미지 위젯
-class ImageMessage extends StatelessWidget {
+class ExhibitImageMessage extends StatelessWidget {
   final String url;
   final VoidCallback onRedraw;
 
-  const ImageMessage({
+  const ExhibitImageMessage({
     super.key,
     required this.url,
     required this.onRedraw,
@@ -76,7 +77,7 @@ class ImageMessage extends StatelessWidget {
                 handlePress: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
+                    builder: (context) => const ArtListScreen(),
                   ),
                 ),
               ),

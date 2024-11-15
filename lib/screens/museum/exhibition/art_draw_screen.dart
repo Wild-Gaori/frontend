@@ -11,6 +11,7 @@ import 'package:qnart/widgets/chat/image_message.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
 import 'package:qnart/widgets/common/yellow_button.dart';
+import 'package:qnart/widgets/museum/exhibit_image_message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -18,21 +19,21 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
-class DrawScreen extends StatefulWidget {
+class ArtDrawScreen extends StatefulWidget {
   final int artworkId;
   final String imgPath;
   final int sessionId;
-  const DrawScreen(
+  const ArtDrawScreen(
       {super.key,
       required this.artworkId,
       required this.imgPath,
       required this.sessionId});
 
   @override
-  State<DrawScreen> createState() => _DrawScreenState();
+  State<ArtDrawScreen> createState() => _ArtDrawScreenState();
 }
 
-class _DrawScreenState extends State<DrawScreen> {
+class _ArtDrawScreenState extends State<ArtDrawScreen> {
   final List<Map<String, String>> _messages = [
     {'sender': 'bot', 'text': '이제 감상 내용을 바탕으로 그림을 그려볼 시간이야!'},
     {'sender': 'button', 'text': '그림 그릴 방법 선택'}
@@ -369,7 +370,7 @@ class _DrawScreenState extends State<DrawScreen> {
                     onFinished: onFinished,
                   );
                 } else {
-                  return ImageMessage(
+                  return ExhibitImageMessage(
                     url: _messages[index]['text']!,
                     onRedraw: _incrementRepaintCnt,
                   );

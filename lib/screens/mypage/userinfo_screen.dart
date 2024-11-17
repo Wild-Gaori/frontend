@@ -5,6 +5,7 @@ import 'package:qnart/utils/fetch_csrf_token.dart';
 import 'package:qnart/widgets/common/dialog_ui.dart';
 import 'package:qnart/widgets/common/inituserinfo.dart';
 import 'package:qnart/widgets/common/main_appbar.dart';
+import 'package:qnart/widgets/common/white_button.dart';
 import 'package:qnart/widgets/mypage/mypage_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -165,6 +166,15 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                   ),
                 ),
               ),
+              WhiteButton(
+                text: '로그아웃',
+                handlePress: () async {
+                  final SharedPreferences pref =
+                      await SharedPreferences.getInstance();
+                  await pref.remove("user_pk");
+                  Navigator.pushNamed(context, '/login');
+                },
+              )
             ],
           ),
         ),

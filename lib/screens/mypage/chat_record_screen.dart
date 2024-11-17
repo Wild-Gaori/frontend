@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qnart/widgets/bot_record_message.dart';
 import 'package:qnart/widgets/chat/bot_message.dart';
 import 'package:qnart/widgets/chat/show_image_container.dart';
 import 'package:qnart/widgets/chat/user_message.dart';
@@ -11,6 +12,7 @@ class ChatRecordScreen extends StatelessWidget {
   final String title;
   final String artist;
   final String imagePath;
+  final int docentId;
   final List<Map<String, dynamic>> messages;
 
   ChatRecordScreen({super.key, required this.chatDetailData})
@@ -18,6 +20,7 @@ class ChatRecordScreen extends StatelessWidget {
         title = chatDetailData["artwork"]["title"],
         artist = chatDetailData["artwork"]["artist"],
         imagePath = chatDetailData["artwork"]["image_path"],
+        docentId = chatDetailData["docent_id"],
         messages = List<Map<String, dynamic>>.from(chatDetailData["messages"]);
 
   @override
@@ -27,6 +30,7 @@ class ChatRecordScreen extends StatelessWidget {
       body: ChatHistory(
         messages: messages,
         imagePath: imagePath,
+        docentId: docentId,
       ),
     );
   }
@@ -35,11 +39,12 @@ class ChatRecordScreen extends StatelessWidget {
 class ChatHistory extends StatelessWidget {
   final List<Map<String, dynamic>> messages;
   final String imagePath;
-  const ChatHistory({
-    super.key,
-    required this.messages,
-    required this.imagePath,
-  });
+  final int docentId;
+  const ChatHistory(
+      {super.key,
+      required this.messages,
+      required this.imagePath,
+      required this.docentId});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +60,8 @@ class ChatHistory extends StatelessWidget {
                 message: messages[index]['content']!,
               );
             } else if (messages[index]['role'] == 'assistant') {
-              return BotMessage(
+              return BotRecordMessage(
+                selectedDocentId: docentId,
                 message: messages[index]['content']!,
               );
             } else {

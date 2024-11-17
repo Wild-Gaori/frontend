@@ -106,6 +106,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         title: record['artwork']['title'],
                         artist: record['artwork']['artist'],
                         imagePath: record['artwork']['image_path'],
+                        docentId: record['docent_id'],
                         callback: () => getRecordDetail(index),
                       );
                     },
@@ -121,13 +122,45 @@ class RecordBtn extends StatelessWidget {
   final String title;
   final String artist;
   final String imagePath;
+  final int docentId;
   final void Function() callback;
   const RecordBtn(
       {super.key,
       required this.title,
       required this.artist,
       required this.imagePath,
+      required this.docentId,
       required this.callback});
+
+  String get imagePathName {
+    switch (docentId) {
+      case 1:
+        return "van";
+      case 2:
+        return "octo";
+      case 3:
+        return "monet";
+      case 4:
+        return "piri";
+      default:
+        return "unknown"; // 예외 처리용 기본값
+    }
+  }
+
+  String get colorName {
+    switch (docentId) {
+      case 1:
+        return "69BDFF";
+      case 2:
+        return "E1AFD1";
+      case 3:
+        return "BC9F8B";
+      case 4:
+        return "6A1C12";
+      default:
+        return "ffffff"; // 예외 처리용 기본값
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +172,10 @@ class RecordBtn extends StatelessWidget {
           Container(
             width: 65,
             height: 65,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('asset/img/chars/van_sized.png'),
+                image: AssetImage('asset/img/chars/${imagePathName}_sized.png'),
               ),
               color: Colors.transparent,
             ),
@@ -155,7 +188,7 @@ class RecordBtn extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.blue[200],
+                color: Color(int.parse("0xff$colorName")),
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.grey,
@@ -199,7 +232,7 @@ class RecordBtn extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 18,
-                            color: Color(0xff020D50),
+                            color: Colors.white,
                           ),
                         ),
                       ],

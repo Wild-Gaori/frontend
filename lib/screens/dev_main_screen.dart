@@ -75,11 +75,16 @@ class DevMainScreen extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              final SharedPreferences pref =
+                  await SharedPreferences.getInstance();
+              final int? userPk = pref.getInt("user_pk");
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyPage(),
+                  builder: (context) => MyPage(
+                    userPk: userPk ?? 0,
+                  ),
                 ),
               );
             },

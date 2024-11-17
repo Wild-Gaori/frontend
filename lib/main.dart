@@ -13,18 +13,31 @@ import 'package:qnart/screens/museum/exhibition_detail_screen.dart';
 import 'package:qnart/screens/mypage/docent_screen.dart';
 import 'package:qnart/screens/mypage_screen.dart';
 import 'package:qnart/widgets/common/dialog_drawing_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // 초기화
+  final prefs = await SharedPreferences.getInstance();
+  final bool isLoggedIn = prefs.getInt('user_pk') != null; // 로그인 여부 확인
+  runApp(MyApp(
+    initialRoute: isLoggedIn ? '/home' : '/login',
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: basicThemeData(), home: const DevMainScreen(), // 홈 화면 설정
+      initialRoute: initialRoute,
+      theme: basicThemeData(),
+      routes: {
+        '/home': (context) => const HomeScreen(),
+        '/login': (context) => const LoginScreen(),
+      },
     );
   }
 }

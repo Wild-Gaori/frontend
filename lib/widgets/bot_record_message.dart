@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dart_openai/dart_openai.dart';
@@ -11,57 +12,30 @@ import '../../env/env.dart';
 
 import 'package:http/http.dart' as http;
 
-class BotMessage extends StatefulWidget {
+class BotRecordMessage extends StatefulWidget {
+  final int selectedDocentId;
   final String message;
 
-  const BotMessage({
+  const BotRecordMessage({
     super.key,
     required this.message,
+    required this.selectedDocentId,
   });
 
   @override
-  State<BotMessage> createState() => _BotMessageState();
+  State<BotRecordMessage> createState() => _BotRecordMessageState();
 }
 
-class _BotMessageState extends State<BotMessage> {
-  int selectedDocentId = 1; //기본값
-  String docentName = "van"; //기본값
+class _BotRecordMessageState extends State<BotRecordMessage> {
+  String docentName = "unknown"; //기본값
 
   @override
   void initState() {
     super.initState();
-    getSelectedDocent();
   }
 
-  void getSelectedDocent() async {
-    int userPk = await getUserPk();
-    const apiUrl = "http://13.124.100.182/docent/get-selected-docent/";
-    String csrfToken = await fetchCsrfToken(apiUrl);
-    final url = Uri.parse(apiUrl);
-    var headers = {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
-      "Cookie": "csrftoken=$csrfToken",
-    };
-    final body = jsonEncode({
-      'user_pk': userPk,
-    });
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        setState(() {
-          selectedDocentId = (jsonDecode(response.body))["selected_docent_id"];
-          docentName = getselectedDocentName();
-          print("selected d id : $selectedDocentId");
-        });
-      } else {
-        print('Error: $response.statusCode');
-      }
-    } finally {}
-  }
-
-  String getselectedDocentName() {
-    switch (selectedDocentId) {
+  String getselectedDocentName(int id) {
+    switch (id) {
       case 1:
         return "van";
       case 2:
@@ -71,7 +45,7 @@ class _BotMessageState extends State<BotMessage> {
       case 4:
         return "piri";
       default:
-        return "van";
+        return "unknown";
     }
   }
 
@@ -124,9 +98,12 @@ class _BotMessageState extends State<BotMessage> {
             height: 50,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('asset/img/chars/${docentName}_sized.png'),
-              ),
+              image: getselectedDocentName(widget.selectedDocentId) == "unknown"
+                  ? null
+                  : DecorationImage(
+                      image: AssetImage(
+                          'asset/img/chars/${getselectedDocentName(widget.selectedDocentId)}_sized.png'),
+                    ),
               color: Theme.of(context).colorScheme.primary,
             ),
           ),

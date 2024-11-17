@@ -32,7 +32,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [
-    {'sender': 'bot', 'text': '안녕! 오늘은 이 그림에 대해 이야기해볼까? 먼저 그림을 천천히 감상해보자!'}
+    {'sender': 'bot', 'text': '먼저 그림을 천천히 감상해보자!'}
   ]; // 발신자-메시지 저장
   final TextEditingController _controller = TextEditingController();
   final SpeechToText _speech = SpeechToText();

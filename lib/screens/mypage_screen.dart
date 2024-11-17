@@ -10,8 +10,9 @@ import 'package:qnart/widgets/common/main_appbar.dart';
 
 class MyPage extends StatelessWidget {
   final appBarHeight = kToolbarHeight;
+  int userPk = 0;
 
-  const MyPage({super.key});
+  MyPage({super.key, required this.userPk});
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +37,14 @@ class MyPage extends StatelessWidget {
                 ),
                 color: Theme.of(context).colorScheme.primary,
               ),
-              child: const Align(
+              child: Align(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    VanImage(),
-                    SizedBox(height: 15),
+                    const VanImage(),
+                    const SizedBox(height: 15),
                     MainBalloon(
-                      charTexts: vanTexts,
+                      userPk: userPk,
                     ),
                   ],
                 ),

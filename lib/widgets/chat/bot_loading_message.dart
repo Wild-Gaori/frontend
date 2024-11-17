@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:qnart/utils/fetch_csrf_token.dart';
+import 'package:qnart/utils/get_user_pk.dart';
+import 'package:http/http.dart' as http;
 
 class BotLoadingMessage extends StatefulWidget {
   final String message;
@@ -19,6 +23,9 @@ class _BotLoadingMessageState extends State<BotLoadingMessage>
   late AnimationController _controller;
   late Timer _timer;
   int _dotCnt = 0;
+
+  int selectedDocentId = 1;
+  String docentName = "van";
 
   @override
   void initState() {
@@ -43,6 +50,48 @@ class _BotLoadingMessageState extends State<BotLoadingMessage>
     super.dispose();
   }
 
+  void getSelectedDocent() async {
+    int userPk = await getUserPk();
+    const apiUrl = "http://13.124.100.182/docent/get-selected-docent/";
+    String csrfToken = await fetchCsrfToken(apiUrl);
+    final url = Uri.parse(apiUrl);
+    var headers = {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken, // CSRF 토큰 포함
+      "Cookie": "csrftoken=$csrfToken",
+    };
+    final body = jsonEncode({
+      'user_pk': userPk,
+    });
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        setState(() {
+          selectedDocentId = (jsonDecode(response.body))["selected_docent_id"];
+          docentName = getselectedDocentName();
+          print("selected d id : $selectedDocentId");
+        });
+      } else {
+        print('Error: $response.statusCode');
+      }
+    } finally {}
+  }
+
+  String getselectedDocentName() {
+    switch (selectedDocentId) {
+      case 1:
+        return "van";
+      case 2:
+        return "octo";
+      case 3:
+        return "monet";
+      case 4:
+        return "piri";
+      default:
+        return "van";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,8 +105,8 @@ class _BotLoadingMessageState extends State<BotLoadingMessage>
             height: 50,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: AssetImage('asset/img/chars/van_sized.png'),
+              image: DecorationImage(
+                image: AssetImage('asset/img/chars/${docentName}_sized.png'),
               ),
               color: Theme.of(context).colorScheme.primary,
             ),

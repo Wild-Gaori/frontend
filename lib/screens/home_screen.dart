@@ -1,21 +1,47 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qnart/screens/artcard/artcard_screen.dart';
 import 'package:qnart/screens/museum/museum1_screen.dart';
 import 'package:qnart/screens/mypage_screen.dart';
+import 'package:qnart/utils/get_user_pk.dart';
+
 import 'package:qnart/widgets/common/main_appbar.dart';
 import 'package:qnart/widgets/main/van_image.dart';
 import 'package:qnart/widgets/main/main_balloon.dart';
 import 'package:qnart/consts/char_texts.dart';
 
-class HomeScreen extends StatelessWidget {
-  final appBarHeight = kToolbarHeight;
-
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final appBarHeight = kToolbarHeight;
+  int userPk = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setUserPk();
+  }
+
+  void setUserPk() async {
+    int pk = await getUserPk();
+    setState(() {
+      userPk = pk;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
+      appBar: const MainAppBar(
+        isBackEnabled: false,
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -35,14 +61,14 @@ class HomeScreen extends StatelessWidget {
                 ),
                 color: Theme.of(context).colorScheme.primary,
               ),
-              child: const Align(
+              child: Align(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    VanImage(),
-                    SizedBox(height: 15),
+                    const VanImage(),
+                    const SizedBox(height: 15),
                     MainBalloon(
-                      charTexts: vanTexts,
+                      userPk: userPk,
                     ),
                   ],
                 ),
@@ -71,11 +97,13 @@ class HomeScreen extends StatelessWidget {
             Positioned(
               bottom: (MediaQuery.of(context).size.height * 0.05),
               right: 0,
-              child: const MainButton(
+              child: MainButton(
                 icon: Icons.person_rounded,
                 title: "마이페이지",
                 subtitle: "기록을 확인하고 정보를 수정해요",
-                destination: MyPage(),
+                destination: MyPage(
+                  userPk: userPk,
+                ),
               ),
             ),
           ],

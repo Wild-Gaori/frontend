@@ -49,8 +49,24 @@ class _BotRecordMessageState extends State<BotRecordMessage> {
     }
   }
 
+  String getselectedDocentVoice() {
+    switch (widget.selectedDocentId) {
+      case 1:
+        return "ngaram";
+      case 2:
+        return "nsunhee";
+      case 3:
+        return "ndain";
+      case 4:
+        return "nwoosik";
+      default:
+        return "ngaram";
+    }
+  }
+
   //naver TTS 버전
   Future<void> getSpeech() async {
+    String voice = getselectedDocentVoice();
     const String apiUrl =
         'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
 
@@ -60,7 +76,7 @@ class _BotRecordMessageState extends State<BotRecordMessage> {
         'X-NCP-APIGW-API-KEY': Env.clientSecret2,
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
-        'speaker': 'ngaram',
+        'speaker': voice,
         'text': widget.message,
         'format': 'mp3',
       });

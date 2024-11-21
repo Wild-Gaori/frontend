@@ -29,13 +29,14 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).colorScheme.primary,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home),
+          icon: const Icon(Icons.home_filled),
           onPressed: () {
             // 홈 버튼 클릭 시 이동할 동작 정의
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const HomeScreen())); // 예: 홈 화면으로 이동
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (_) => false,
+            ); // 예: 홈 화면으로 이동
           },
           color: const Color(0xffF5004F), // 버튼 색상 설정
         ),

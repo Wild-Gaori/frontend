@@ -29,6 +29,7 @@ class _BotLoadingMessageState extends State<BotLoadingMessage>
 
   @override
   void initState() {
+    getSelectedDocent();
     // TODO: implement initState
     super.initState();
     _controller = AnimationController(
@@ -66,11 +67,14 @@ class _BotLoadingMessageState extends State<BotLoadingMessage>
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        setState(() {
-          selectedDocentId = (jsonDecode(response.body))["selected_docent_id"];
-          docentName = getselectedDocentName();
-          print("selected d id : $selectedDocentId");
-        });
+        if (mounted) {
+          setState(() {
+            selectedDocentId =
+                (jsonDecode(response.body))["selected_docent_id"];
+            docentName = getselectedDocentName();
+            print("selected d id : $selectedDocentId");
+          });
+        }
       } else {
         print('Error: $response.statusCode');
       }

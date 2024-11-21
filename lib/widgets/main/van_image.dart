@@ -38,10 +38,13 @@ class _VanImageState extends State<VanImage> {
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        setState(() {
-          selectedDocentId = (jsonDecode(response.body))["selected_docent_id"];
-          docentName = getselectedDocentName();
-        });
+        if (mounted) {
+          setState(() {
+            selectedDocentId =
+                (jsonDecode(response.body))["selected_docent_id"];
+            docentName = getselectedDocentName();
+          });
+        }
       } else {
         print('Error: $response.statusCode');
       }

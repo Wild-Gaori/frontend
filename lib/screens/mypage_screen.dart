@@ -56,7 +56,7 @@ class MyPage extends StatelessWidget {
               child: const MainButton(
                 icon: Icons.chat,
                 title: "대화 기록 보기",
-                subtitle: "대화와 그림 기록을 확인해요",
+                subtitle: "이전 대화 기록을 확인해요",
                 destination: RecordScreen(),
               ),
             ),

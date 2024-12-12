@@ -37,8 +37,8 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
 1. 저장소 클론
 
    ```bash
-   git clone <repository_url>
-   cd <repository_name>
+   git clone https://github.com/Wild-Gaori/frontend.git
+   cd frontend
    ```
 
 2. 종속성 설치<br>

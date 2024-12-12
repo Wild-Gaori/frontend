@@ -54,12 +54,12 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
    flutter build apk
    ```
 
-## 🤖 How to install
+## 🤖How to install
 
 1. 빌드 시 생성된 APK 파일을 `build/app/outputs/flutter-apk/`에서 확인합니다.
 2. APK를 디바이스로 전송하고 설치합니다.
 
-## 📜 How to test
+## 📜How to test
 
 설치된 APK를 실행하고, 앱이 정상적으로 실행되었다면 아래 샘플 데이터로 테스트를 진행합니다.
 
@@ -69,7 +69,7 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
 
 - **테스트 계정**: ID: test3 / PW: 1111
 
-## Database
+### Backend and Database
 
 앱은 다음과 같은 백엔드 서비스를 통합합니다:
 
@@ -77,7 +77,7 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
   - 백엔드 리포지토리: ![QnArt-backend](https://github.com/Wild-Gaori/backend)
 - **데이터베이스**: mySQL Database를 사용합니다. 데이터는 동적으로 백엔드에서 가져옵니다.
 
-## 사용된 오픈소스 라이브러리
+## 🌐Used Open Source
 
 이 프로젝트는 다음과 같은 오픈소스 라이브러리를 사용합니다:
 

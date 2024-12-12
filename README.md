@@ -50,6 +50,9 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
 
 3. 앱 빌드<br>
    이 앱은 안드로이드 OS 환경에서 지원됩니다.
+   네이버 TTS API 사용을 위한 환경 변수 설정이 필요합니다. 네이버 Cloud CONSOLE에서 유효한 Client ID와 Client Secret을 발급받은 후 ClientId와 ClientSecret2로 key를 지정한 뒤 빌드를 수행하세요.<br>
+   [NAVER API 공식 문서](https://api.ncloud-docs.com/docs/common-ncpapi)<br>
+   [Flutter 환경 변수 설정 방법](https://day4fternoon.tistory.com/127)
    ```bash
    flutter build apk
    ```
@@ -74,7 +77,7 @@ QnArt는 주입식 설명 위주의 수동적인 미술작품 감상, 어려운 
 앱은 다음과 같은 백엔드 서비스를 통합합니다:
 
 - **API 엔드포인트**: 사용자 인증 및 작품 데이터를 제공하는 Django 백엔드.
-  - 백엔드 리포지토리: ![QnArt-backend](https://github.com/Wild-Gaori/backend)
+  - 백엔드 리포지토리: [QnArt-backend](https://github.com/Wild-Gaori/backend)
 - **데이터베이스**: mySQL Database를 사용합니다. 데이터는 동적으로 백엔드에서 가져옵니다.
 
 ## 🌐Used Open Source
